@@ -1,6 +1,4 @@
-# agents
-
-Custom Claude Code skills repo. Follows the [Agent Skills spec](https://agentskills.io/specification) for skills.sh compatibility.
+# Agents
 
 ## Rules
 
@@ -15,6 +13,8 @@ Custom Claude Code skills repo. Follows the [Agent Skills spec](https://agentski
 
 ### Skill Location
 - All skills go under `skills/<skill-name>/SKILL.md`. The `npx skills` CLI only discovers skills in the `skills/` directory at repo root.
+
+Follows the [Agent Skills spec](https://agentskills.io/specification) for skills.sh compatibility.
 
 ### SKILL.md Frontmatter Constraints
 - `name` is **required**. Max 64 chars. Lowercase letters, numbers, hyphens only. Cannot start/end with hyphen. No consecutive hyphens. **Must match parent directory name exactly.**
