@@ -1,6 +1,9 @@
 ---
 name: subagents-tasks
-description: Turn input into an iterative plan file that includes Pending/In progress/Done sections + next-subagent signals; subagents can consume, execute, and update in sequence.
+description: |
+   Converts input into an iterative plan file containing Pending/In progress/Done
+   sections and next-subagent signals for subagents to consume and update. Invoke
+   when preparing structured sub-agent plans from PRDs, issue lists, or conversations.
 ---
 
 ## Summary

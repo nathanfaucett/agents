@@ -1,6 +1,10 @@
 ---
 name: agent-ready
-description: Analyze a codebase to identify gaps, inconsistencies, and friction points that would hinder autonomous agents (or developers) from effectively understanding, modifying, and extending the project. Provide concrete, prioritized recommendations to improve agent operability.
+description: |
+   Analyzes a codebase to identify gaps, inconsistencies, and friction points that hinder
+   autonomous agents or developers from effectively understanding, modifying, and
+   extending the project. Invoke when assessing repository readiness for autonomous
+   agents or onboarding developers.
 ---
 
 ## Summary

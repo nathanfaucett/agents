@@ -1,6 +1,10 @@
 ---
 name: subagents-tasks-run
-description: takes a control file (master Agents Loop markdown) plus per-task markdown files and executes the next pending task, updating the control and task files with progress and signals for the next sub-agent.
+description: |
+	Executes the next pending task from a control Agents Loop markdown and updates
+	both the control and per-task files with progress and signals for subsequent
+	sub-agents. Invoke when running a sub-agent iteration to advance a coordinated
+	multi-agent workflow.
 ---
 
 ## Summary
