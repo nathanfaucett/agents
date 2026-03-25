@@ -4,6 +4,7 @@
 
 ```bash
 mkdir -p ~/.claude/agents
+ln -sf ./agents/implementation-researcher.agent.md ~/.claude/agents/principal-engineer.agent.md
 ln -sf ./agents/principal-engineer.agent.md ~/.claude/agents/principal-engineer.agent.md
 ln -sf ./agents/security-engineer.agent.md ~/.claude/agents/security-engineer.agent.md
 ln -sf ./agents/ux-ui-engineer.md.agent.md ~/.claude/agents/ux-ui-engineer.md.agent.md
