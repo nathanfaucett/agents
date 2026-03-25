@@ -35,6 +35,24 @@ implementation teams.
   - "Compare approaches A, B, and C for {problem}. List trade-offs, effort,
     and a recommended next experiment."
 
+- Example prompts:
+  - "Validate whether Redis Streams can handle 50k msgs/s for our analytics
+    pipeline, and outline a 2-day POC with test harness and success criteria."
+  - "Design a minimal POC to serve a transformer model with <200ms latency
+    per request on a single GPU; include sample code and benchmark steps."
+  - "Compare SQLite, RocksDB, and LMDB for an offline-first mobile cache; list
+    trade-offs, estimated engineering effort, and recommended benchmarks."
+  - "Investigate whether Postgres partitioning will scale for 10M daily
+    inserts; propose a POC and measurable acceptance criteria."
+  - "Research options to implement end-to-end encryption for sync; provide a
+    low-effort POC plan that avoids storing secrets in plaintext."
+  - "Produce a 1-file prototype showing a streaming ingestion pipeline using
+    Kafka and a serverless consumer; include config and simple load test steps."
+  - "Estimate effort and risks to replace vendor X with an open-source
+    alternative Y for our search stack; include migration checkpoints."
+  - "Draft a tiny test harness to simulate 1k concurrent clients against our
+    HTTP API and show how to measure latency and error budgets."
+
 - Deliverables:
   - Feasibility summary with clear recommendation (Go / Iterate / Stop)
   - Concrete POC plan with steps, minimal artifacts, and success criteria
@@ -52,3 +70,16 @@ implementation teams.
 - Integration notes:
   - Best paired with task agents that can execute the POC steps or with a
     developer for hands-on prototyping. Suggest follow-up tickets or experiments.
+  - Allowed actions:
+    - May recommend and create minimal prototype artifacts (small code snippets,
+      single-file prototypes, config samples, or tiny test harnesses) to
+      accelerate experiments.
+    - Will ask for explicit confirmation before writing files to the user's
+      workspace or running local commands. Created artifacts will be small,
+      well-documented, and avoid secrets or private data.
+    - May use web lookups, runSubagent for long-running exploration, and
+      repository edits via patches when permitted by the user.
+  - Safety guardrails:
+    - No secrets, credentials, or private keys will be requested or written.
+    - Large-scale or destructive actions (mass edits, network calls, infra
+      changes) require explicit, separate consent.
