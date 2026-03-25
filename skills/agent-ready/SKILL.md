@@ -23,6 +23,8 @@ Analyze a codebase to identify gaps, inconsistencies, and friction points that w
   * Issue tracker or roadmap
   * Target agent capabilities (e.g., codegen, refactor, test-writing)
 
+   * Project-level agent metadata files (optional but recommended): checks for `agents.md`, `agents.yaml`, or `claude.md` that document agent entrypoints, permissions, or onboarding notes.
+
 ---
 
 ### Outputs
@@ -112,6 +114,7 @@ Structured report with:
   * Core logic?
   * Data models?
   * Extension points?
+   * Is there a clear public API surface for modules (index files or documented exports) so agents can consume modules without deep-importing internals?
 
 #### 5. Determinism
 
@@ -135,6 +138,14 @@ Structured report with:
 * Module responsibilities
 * Contribution patterns
 
+#### 9. Progressive Disclosure
+
+* Is advanced functionality hidden behind explicit extension points, feature flags, or opt-ins so agents (and humans) can start with a simple surface and progressively explore complexity?
+
+#### 10. Module API Boundaries
+
+* Do modules expose a documented/consistent API surface and avoid consumers importing internal implementation files (deep imports)?
+
 ---
 
 ### Detection Patterns
@@ -149,6 +160,13 @@ Flag when:
 * Inconsistent abstractions exist for similar tasks
 * Tests are missing for core logic
 * Naming does not reflect intent
+
+### Core checks
+
+- **Agent metadata file**: Detects presence of `agents.md`, `agents.yaml`, or `claude.md`. The skill does not require these files, but will flag their absence and recommend creating one as a high-value quick win for onboarding and safe boundaries.
+- **Separation of concerns**: Verifies that layers (API/routes, services, data access, UI, infra) are separated and calls out cross-cutting business logic or layer bleed.
+- **Module API surface / Deep imports**: Checks modules expose a clear public API (index files or documented exports) and flags imports that reach into another module's internals (deep imports).
+- **Progressive disclosure**: Checks that advanced or opt-in functionality is hidden behind explicit extension points, feature flags, or well-documented opt-ins rather than exposed at the top level.
 
 ---
 

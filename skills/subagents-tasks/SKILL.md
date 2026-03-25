@@ -7,11 +7,11 @@ description: |
 ---
 
 ## Summary
-Convert PRD/issue/todo/conversation into an Agents Loop markdown with explicit sub-agent checkpoint workflow. The output file should be structured for iterative execution, with clear next steps and signals for sub-agents to pick up work in sequence.
+Convert PRD/issue/todo/conversation into an Agents task breakdown markdown files with explicit sub-agent checkpoint workflow. The output file should be structured for iterative execution, with clear next steps and signals for sub-agents to pick up work in sequence.
 
 ## When to use
 - You have a PRD, issue list, todo list, or raw discussion and need a structured, execution-ready plan.
-- You want to make work decomposable into experiment/loop cycles (Ralph Loop).
+- You want to make work decomposable into cycles.
 - You need clear outputs for engineering, design, or PM handoff.
 
 ## Input options
@@ -38,7 +38,7 @@ Convert PRD/issue/todo/conversation into an Agents Loop markdown with explicit s
 - Example output skeleton:
    - `## Context`
    - `## Goal` + metrics
-   - `## Loop hypothesis`
+   - `## Hypothesis`
    - `## Experiments / increments`
    - `## Acceptance criteria`
    - `## Blockers/risks`
@@ -56,7 +56,7 @@ Convert PRD/issue/todo/conversation into an Agents Loop markdown with explicit s
 3. Normalize scope
    - Must-have vs nice-to-have.
    - Key user scenarios and personas.
-4. Derive candidate Ralph Loop blocks
+4. Derive candidate blocks
    - Problem statement
    - Hypothesis (if unknown, propose)
    - Experiment(s) / increment(s)
@@ -70,7 +70,7 @@ Convert PRD/issue/todo/conversation into an Agents Loop markdown with explicit s
 6. Build the `Sub Agent Iterative Ready` file
    - `## Context`
    - `## Goal` + metrics
-   - `## Loop hypothesis`
+   - `## Hypothesis`
    - `## Experiments / increments`
    - `## Acceptance criteria`
    - `## Blockers/risks`
@@ -106,7 +106,7 @@ Convert PRD/issue/todo/conversation into an Agents Loop markdown with explicit s
 
 ## Quality criteria
 - Execution-ready with clear handoff artifacts.
-- Includes at least one loop/hypothesis per feature area.
+- Includes at least one hypothesis per feature area.
 - Contains explicit acceptance criteria and test signals.
 - Presents one-liner update for standups.
 

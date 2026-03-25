@@ -1,7 +1,7 @@
 ---
 name: subagents-tasks-run
 description: |
-	Executes the next pending task from a control Agents Loop markdown and updates
+	Executes the next pending task from a control Agents tasks markdown and updates
 	both the control and per-task files with progress and signals for subsequent
 	sub-agents. Invoke when running a sub-agent iteration to advance a coordinated
 	multi-agent workflow.
@@ -20,7 +20,7 @@ This skill consumes a plan folder (named `${descriptive-name}`) that contains a 
 5. Execute the identified task in a sub-agent with a fresh context (the sub-agent should follow instructions inside the `taskN.md`). Capture outputs, logs, and any blockers.
 6. Update the `taskN.md` with execution details: outputs, artifacts produced, blockers, and a short one-line standup update. Add an explicit instruction for the next sub-agent if applicable.
 7. Update `tasks.md` to move the task from `In progress` to `Done` (or back to `Pending` if blocked), include a link to the updated `taskN.md`, and add `Signals` for the next sub-agent (e.g., `run-task: ${descriptive-name}/task3.md`).
-8. If the input is a single embedded Agents Loop file (no plan folder), offer to split it into a `${descriptive-name}/` folder with `tasks.md` and `taskN.md` files and proceed; otherwise operate in-place but prefer the folder model.
+8. If the input is a single embedded Agents tasks file (no plan folder), offer to split it into a `${descriptive-name}/` folder with `tasks.md` and `taskN.md` files and proceed; otherwise operate in-place but prefer the folder model.
 9. Write all modified files back to the filesystem using the agent filesystem actions (`create_file`/overwrite), ensuring directories exist before writing. Follow the `subagents-tasks` output obligations:
 	- Use the same naming and folder structure as `subagents-tasks` (folder `${descriptive-name}/`, `tasks.md`, and `taskN.md` files).
 	- Include all created/changed file paths in the final summary.
