@@ -9,7 +9,7 @@ Use this skill to turn a rough idea into a fast, testable proof of concept. The 
 
 This skill is optimized for speed and clarity, not production readiness. Outputs may include lightweight code sketches, experiment plans, test harnesses, rough architecture notes, and a go-or-no-go recommendation.
 
-The primary execution agent for this skill is `implementation-researcher.agent.md`. Use that agent for the actual feasibility analysis, trade-off evaluation, and POC design work.
+The primary execution agent for this skill is `researcher-engineer.agent.md`. Use that agent for the actual feasibility analysis, trade-off evaluation, and POC design work.
 
 ## When to use
 - A feature idea is still vague and needs a concrete experiment.
@@ -53,7 +53,7 @@ Produce a compact POC package containing:
    - What to do if the experiment succeeds, fails, or is inconclusive
 
 ## Required operating mode
-- Delegate the core investigation to `implementation-researcher.agent.md`.
+- Delegate the core investigation to `researcher-engineer.agent.md`.
 - Frame the work as a focused research-and-prototype task, not a production implementation.
 - Prefer the smallest experiment that produces credible evidence.
 - Keep artifacts intentionally narrow, easy to inspect, and safe to discard.
@@ -67,7 +67,7 @@ Produce a compact POC package containing:
    - Timebox, environment limits, acceptable dependencies, data sensitivity, and performance targets.
 3. Choose the experiment shape
    - Pick one of: code spike, benchmark, integration mock, architecture comparison, or test harness.
-4. Invoke `implementation-researcher.agent.md`
+4. Invoke `researcher-engineer.agent.md`
    - Ask it to evaluate feasibility, compare approaches if needed, and design the minimal POC.
    - If useful, have it produce tiny prototype snippets or a benchmark outline.
 5. Review the recommendation
@@ -79,7 +79,7 @@ Produce a compact POC package containing:
 
 ## Branching logic
 - If the user is deciding between approaches:
-  - Ask `implementation-researcher` for a comparison with trade-offs, estimated effort, and a recommended experiment.
+   - Ask `researcher-engineer` for a comparison with trade-offs, estimated effort, and a recommended experiment.
 - If the user wants to know whether something can scale:
   - Ask for a benchmark-oriented POC with measurable thresholds.
 - If the user wants an integration spike:
@@ -105,7 +105,7 @@ The skill is successful when it:
 - Prefer mocks, fixtures, and public sample data over sensitive data.
 - Call out missing validation work, hardening, tests, and operational concerns.
 
-## Prompt patterns for `implementation-researcher`
+## Prompt patterns for `researcher-engineer`
 - "Design a 1-2 day POC to validate whether {approach} can satisfy {constraint}. Include steps, minimal artifacts, and success criteria."
 - "Compare approaches A, B, and C for {problem}. Recommend the smallest experiment that would let us choose confidently."
 - "Produce a lightweight benchmark plan to test whether {system} can handle {load target}. Include pass/fail thresholds."

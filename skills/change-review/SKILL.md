@@ -7,7 +7,9 @@ description: |
 ## Summary
 Use this skill for a structured review of a code change before merge.
 
-It uses a fan-out/fan-in model: the parent reviewer inspects the diff, launches multiple specialist subagents in parallel, then synthesizes their feedback into one review. Reviewer selection is role-based, not tied to fixed agent files. Use at least 2 reviewers for any non-trivial change: one general coding reviewer plus specialists as needed, such as UX/UI, security, and DevOps or deployment when infra, release, or runtime configuration is involved. Use `Explore` for quick read-only repository context when the diff touches unfamiliar areas or needs dependency tracing.
+It uses a fan-out/fan-in model: the parent reviewer inspects the diff, launches multiple specialist subagents in parallel, then synthesizes their feedback into one review. Reviewer selection is role-based, not tied to fixed agent files. Use at least 2 reviewers for any non-trivial change: one code-and-QA reviewer plus specialists as needed, such as UX/UI, security, and DevOps or deployment when infra, release, or runtime configuration is involved. Use `Explore` for quick read-only repository context when the diff touches unfamiliar areas or needs dependency tracing.
+
+This repository ships a default reviewer set for code and test quality, architecture, security, UX/UI, and DevOps review, but the workflow should still work with any user-provided agents that cover the same lenses.
 
 ## When to use
 - A pull request, patch, or local diff needs a structured review before merge.
@@ -77,9 +79,11 @@ Produce a single synthesized review package containing:
    - Check tests, build files, configs, and any touched documentation when relevant.
    - Use `Explore` first if the repository area is unfamiliar or dependency tracing is needed.
 3. Choose specialist reviewers
-   - Start with a general coding reviewer for correctness, architecture, maintainability, and test quality.
+   - Start with a code and QA reviewer for correctness, maintainability, edge cases, test quality, and release confidence.
+   - Use an architecture-focused reviewer separately when the diff raises broader system design, scalability, or cross-cutting design concerns.
    - Add a security reviewer for auth, data handling, trust boundaries, secrets, dependency, or abuse-case risk.
    - Add a UX/UI reviewer for user-facing behavior, accessibility, interaction design, responsive impact, or copy.
+   - Add a dedicated QA specialist only if one is available and the change has unusually high release or regression risk.
    - Add a DevOps or deployment reviewer when CI/CD, infra, runtime config, observability, rollout, or operational behavior is touched.
    - Add more specialists only when the change justifies it.
    - Omit lenses that are clearly irrelevant to the diff, but keep the minimum reviewer count.
@@ -101,13 +105,16 @@ Produce a single synthesized review package containing:
    - Resolve the default branch first.
    - Review the current branch diff against that default branch.
 - If the diff is backend, infra, data, or architecture-heavy:
-  - Always include a general coding reviewer.
+   - Always include a code-and-QA reviewer.
+   - Include an architecture-focused reviewer when the change affects system boundaries, data models, distributed coordination, or operational design.
   - Include a security reviewer when secrets, permissions, network boundaries, data access, or third-party integrations are touched.
 - If the diff changes CI, deployment, infrastructure-as-code, container setup, environment handling, runtime configuration, observability, or rollback behavior:
   - Include a DevOps or deployment reviewer.
 - If the diff is UI-heavy:
-  - Include a UX/UI reviewer.
-  - Still include a general coding reviewer for correctness and maintainability.
+   - Include a UX/UI reviewer.
+   - Still include a code-and-QA reviewer for correctness and maintainability.
+- If the diff changes critical behavior but test evidence is weak or absent:
+   - Treat this as mandatory depth for the code and QA reviewer, and escalate with an extra QA specialist only when available.
 - If the diff changes authentication, authorization, payments, file upload, cryptography, tenant isolation, or external callbacks:
   - Treat the security reviewer as mandatory.
 - If the diff is small but risky:
@@ -163,19 +170,23 @@ The skill is successful when it:
 - [ ] Final review written by the parent reviewer, not copied verbatim from subagents
 
 ## Prompt patterns for specialist subagents
-- General coding reviewer
-   - "Review this change for correctness, architecture, maintainability, performance, and test quality. Return only concrete findings, open questions, and important test gaps."
+- Code and QA reviewer
+   - "Review this change for correctness, maintainability, edge cases, performance, test quality, and release confidence. Return only concrete findings, open questions, and important test gaps."
+- Architecture-focused reviewer
+   - "Review this change for architectural fit, scalability, reliability, and system design risk. Return only concrete findings, open questions, and notable migration or operability concerns."
 - Security reviewer
    - "Review this change for security issues, trust boundary mistakes, unsafe data handling, auth/authz problems, dependency risk, and missing abuse-case coverage. Return prioritized findings only."
 - UX/UI reviewer
    - "Review this user-facing change for UX regressions, accessibility issues, interaction inconsistencies, responsive concerns, and unclear copy. Return only actionable findings and testing gaps."
+- Additional QA specialist (optional)
+   - "Review this change for test adequacy, regression coverage, release confidence, and missing validation for changed behavior. Return concrete coverage gaps, open questions, and release-risk findings only."
 - DevOps or deployment reviewer
    - "Review this change for CI/CD risk, deployment safety, infrastructure correctness, runtime configuration issues, observability gaps, and rollback hazards. Return prioritized operational findings only."
 - `Explore`
   - "Read the relevant modules around this diff and summarize the architectural context, call paths, and likely regression surfaces so the specialist reviewers can stay focused."
 
 ## Example requests
-- "Review this PR using a general coding reviewer plus the relevant specialists in parallel, then synthesize a final findings list."
+- "Review this PR using a code-and-QA reviewer plus the relevant specialists in parallel, then synthesize a final findings list."
 - "Do a security-heavy review of these authentication changes and only report merge-blocking issues."
-- "Review this front-end diff with a UX/UI and general coding lens, then give me a concise final review."
+- "Review this front-end diff with a UX/UI and code-and-QA lens, then give me a concise final review."
 - "Run a parallel review on this branch and tell me whether there are any correctness, deployment, or rollout risks before merge."

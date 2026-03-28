@@ -1,10 +1,6 @@
 ---
 name: subagents-tasks-run
-description: |
-	Executes the next pending task from a control Agents tasks markdown and updates
-	both the control and per-task files with progress and signals for subsequent
-	sub-agents. Invoke when running a sub-agent iteration to advance a coordinated
-	multi-agent workflow.
+description: Executes the next pending task from a control Agents tasks markdown and updates both the control and per-task files with progress and signals for subsequent sub-agents. Invoke when running a sub-agent iteration to advance a coordinated multi-agent workflow.
 ---
 
 ## Summary
