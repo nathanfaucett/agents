@@ -49,7 +49,8 @@ npx skills add \
   mattpocock/skills/improve-codebase-architecture \
   mattpocock/skills/prd-to-issues \
   mattpocock/skills/tdd \
-  mattpocock/skills/write-a-prd
+  mattpocock/skills/write-a-prd \
+  --global -y
 ```
 
 - [grill-me](https://github.com/mattpocock/skills): Deeply interview the user to stress-test a plan or design.
