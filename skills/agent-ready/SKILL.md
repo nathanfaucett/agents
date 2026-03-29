@@ -23,7 +23,7 @@ Analyze a codebase to identify gaps, inconsistencies, and friction points that w
   * Issue tracker or roadmap
   * Target agent capabilities (e.g., codegen, refactor, test-writing)
 
-   * Project-level agent metadata files (optional but recommended): checks for `agents.md`, `agents.yaml`, or `claude.md` that document agent entrypoints, permissions, or onboarding notes.
+   * Project-level agent metadata files (optional but recommended): checks for `AGENTS.md`, `AGENTS.yaml`, or `CLAUDE.md` that document agent entrypoints, permissions, or onboarding notes.
 
 ---
 
@@ -163,7 +163,7 @@ Flag when:
 
 ### Core checks
 
-- **Agent metadata file**: Detects presence of `agents.md`, `agents.yaml`, or `claude.md`. The skill does not require these files, but will flag their absence and recommend creating one as a high-value quick win for onboarding and safe boundaries.
+- **Agent metadata file**: Detects presence of `AGENTS.md`, `AGENTS.yaml`, or `CLAUDE.md`. The skill does not require these files, but will flag their absence and recommend creating one as a high-value quick win for onboarding and safe boundaries.
 - **Separation of concerns**: Verifies that layers (API/routes, services, data access, UI, infra) are separated and calls out cross-cutting business logic or layer bleed.
 - **Module API surface / Deep imports**: Checks modules expose a clear public API (index files or documented exports) and flags imports that reach into another module's internals (deep imports).
 - **Progressive disclosure**: Checks that advanced or opt-in functionality is hidden behind explicit extension points, feature flags, or well-documented opt-ins rather than exposed at the top level.

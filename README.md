@@ -30,6 +30,7 @@ Current local skills:
 - `agent-ready`: Analyze a codebase for gaps that hinder autonomous agents and provide prioritized recommendations.
 - `change-review`: Run a structured, multi-lens review and synthesize actionable findings before merge.
 - `poc`: Produce a focused proof-of-concept plan with feasibility assessment and minimal experiment artifacts.
+- `review`: Run a review process or analysis (see SKILL.md for details).
 - `subagents-tasks`: Convert PRDs/issues/todos into iterative task plans with explicit sub-agent workflow signals.
 - `subagents-tasks-run`: Execute the next pending task from a plan and update workflow state files.
 
