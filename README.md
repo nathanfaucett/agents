@@ -8,11 +8,14 @@ under `skills/`.
 Current local agents:
 
 - `code-qa-engineer`
+- `code-reviewer`
 - `devops-engineer`
 - `principal-engineer`
 - `researcher-engineer`
 - `security-engineer`
 - `ux-engineer`
+
+Note: Keep this list in sync with the `agents/` directory or generate it from the filesystem.
 
 Link all local agents into `~/.claude/agents`:
 
@@ -45,13 +48,15 @@ done
 ## Optional External Skills
 
 ```bash
-npx skills add \
+for skill in \
   mattpocock/skills/grill-me \
   mattpocock/skills/improve-codebase-architecture \
   mattpocock/skills/prd-to-issues \
   mattpocock/skills/tdd \
-  mattpocock/skills/write-a-prd \
-  --global -y
+  mattpocock/skills/write-a-prd
+do
+  npx skills add "$skill" --global --symlink -y
+done
 ```
 
 - [grill-me](https://github.com/mattpocock/skills): Deeply interview the user to stress-test a plan or design.
