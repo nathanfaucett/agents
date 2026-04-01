@@ -1,204 +1,79 @@
 ---
 name: change-review
-description: |
-   Provides a structured code review of a proposed change, including feedback on correctness, style, maintainability, and potential impacts. Invoke when a team needs a second opinion on a code change, wants to ensure quality before merging, or needs to identify potential issues early in the development process.
+description: >
+  Structured, blocker-first AI change review that runs specialist reviewers in parallel and synthesizes a single, evidence-oriented final review.
 ---
 
 ## Summary
-Use this skill for a structured review of a code change before merge.
-
-Default stance is blocker-first and risk-first: identify merge blockers and required fixes before reporting non-blocking commentary.
-
-Subagents should report all material findings they observe. The parent reviewer alone decides which findings are `must-change` before merge.
-
-It uses a fan-out/fan-in model: the parent reviewer inspects the diff, discovers available agents, selects the best-fit agents for the change, launches them in parallel, then synthesizes their feedback into one review. Reviewer selection is dynamic: the skill scans the local `agents/` directory, reads each agent's `description` frontmatter field, and matches agents to required review lenses using keyword and intent matching. Use at least 2 reviewers for any non-trivial change: one code-and-QA reviewer plus specialists as needed. Use `Explore` for quick read-only repository context when the diff touches unfamiliar areas or needs dependency tracing.
-
-For large projects or high-churn branches, run in staged mode: triage first, then review in chunks. Avoid loading entire diffs into one prompt. Prefer file lists, stats, and targeted hunks so the parent reviewer does not exceed context or tool limits.
-
-If no local `agents/` directory exists or a lens has no matching agent, fall back to an inline prompt using the lens-specific prompt patterns defined in this skill.
+Structured AI-driven review that dispatches 2+ specialist subagents, prioritizes merge blockers, and returns a single synthesized verdict and prioritized findings. Long examples and scripts are moved to an appendix.
 
 ## When to use
-- A pull request, patch, or local diff needs a structured review before merge.
-- A team wants broader coverage across architecture, security, and UX/accessibility.
-- A change spans multiple layers and would benefit from independent specialist perspectives.
-- A reviewer wants a synthesized findings list rather than raw commentary from multiple reviewers.
-- The repository or change is large enough that parallel inspection is faster than a single sequential review.
+Use for PRs/patches needing multi-lens coverage (correctness, security, architecture, UX, operability) or when parallel specialist review improves confidence before merge.
 
 ## When not to use
-- The user only wants a narrow answer such as "does this compile" or "summarize this diff".
-- The task is to implement or fix the code rather than review it.
-- The change is trivial and a heavyweight multi-agent review would add noise instead of signal.
-- The user asks for a purely stylistic pass with no concern for correctness, risk, or regressions.
+Avoid for trivial edits, single-line checks (compile-only), or when the task is to implement fixes rather than review them.
 
 ## Inputs
-Provide as many of these as possible:
-
-- The change under review: commit range, pull request, branch diff, patch, or list of changed files.
-- If the user does not specify the change under review, use the current branch diff against the repository default branch as the review target.
-- Review scope: full review, security-only, architecture-only, UX-only, or release-blocking issues only.
-- Context on the purpose of the change, linked issue, or expected behavior.
-- Constraints such as deadlines, non-goals, sensitive areas, or files that should be excluded.
-- Evidence already available, such as tests run, screenshots, benchmark results, or rollout notes.
-
-If the review target is ambiguous, resolve the minimum missing context first: what changed, what the change is meant to do, and whether the user wants only findings or also suggested fixes.
+- Change target: commit range / PR / branch diff or list of changed files.
+- Review scope: full / security-only / architecture-only / release-blocking.
+- Context: purpose, linked issue, constraints, and any evidence (tests, screenshots, benchmarks).
+- If missing, parent reviewer must gather minimal context before launching subagents.
 
 ## Outputs
-Produce a single synthesized review package containing:
-
-1. Verdict
-   - One of: `Approve`, `Needs changes`, `Question`, or `Block`
-   - Short rationale
-   - Apply strict verdict rules:
-     - `Block`: one or more confirmed merge blockers (must-change before merge)
-     - `Needs changes`: no hard blocker, but at least one required fix remains
-     - `Question`: missing context prevents confidence on merge readiness
-     - `Approve`: no required fixes remain
-2. Findings
-   - Prioritized list of concrete issues
-   - Each finding should include severity, merge impact (`must-change` or `non-blocking`), why it matters, and where it appears
-3. Must-change list
-   - Explicit list of issues that must be fixed before merge
-   - Empty only when verdict is `Approve` or `Question`
-4. Coverage summary
-   - Which review lenses were applied: architecture, correctness, security, UX/accessibility, testing, operability
-   - Which lenses were intentionally skipped and why
-5. Open questions
-   - Assumptions, missing context, or unclear intent that affects confidence
-6. Residual risks
-   - Risks not severe enough to block but worth noting before merge or release
-7. Secondary summary
-   - Brief change summary or positive notes only after findings are covered
+A single synthesized review package containing:
+- Verdict: `Approve` | `Needs changes` | `Question` | `Block` with short rationale.
+- Prioritized findings with severity and merge impact (`must-change` or `non-blocking`).
+- Explicit `must-change` list.
+- Coverage summary (lenses applied / skipped).
+- Open questions and residual risks.
+- Secondary summary or positive notes.
 
 ## Blocker-first policy
-- Prioritize actionable blockers and must-change findings over completeness of low-risk commentary.
-- Treat the following as potential blockers by default when evidenced in code: correctness bugs, data loss/integrity risk, security boundary violations, broken deploy/runtime behavior, and critical test coverage gaps on changed behavior.
-- Only include style or preference notes when they materially impact maintainability, readability, accessibility, or future defect risk.
-- If blockers are found, present them first and avoid diluting the review with non-essential nits.
+Present confirmed merge blockers first (correctness, data-integrity, security boundary violations, broken runtime behavior, or critical test gaps). Downgrade pure style notes unless they materially affect maintenance or risk.
 
-### Output Formatting
-Use the provided templates to format the review response:
-- **Subagent output**: Use `templates/subagent-output.md` to format each specialist review. Include the agent name, review lens, and findings in a consistent structure. Clearly identify the reviewer as an AI agent.
-   - Subagents must not classify findings as `must-change` vs `non-blocking`; they should report complete findings and evidence.
-- **Final review**: Use `templates/reviewer-output.md` to format the synthesized final review. This template provides consistent sections for verdict, findings, coverage, open questions, and residual risks. Always include:
-  - A header identifying "Conducted By: AI Review Agent"
-  - List of all reviewer agents used
-  - Clear attribution of each finding to its source agent
-  - A footer noting "Review conducted entirely by AI"
+## Output formatting
+- Subagents: use `templates/subagent-output.md`. They return findings and evidence but must not classify merge gating.
+- Final review: use `templates/reviewer-output.md`. The parent reviewer assigns `must-change` labels.
 
-## VS Code parallel execution constraints
-These rules apply whenever this skill runs inside VS Code Copilot's agent mode.
-
-- **Pre-fetch all context before launching subagents.** Run every `run_in_terminal` call (git diff hunk generation, file stat collection, `rg` searches) in the parent turn and embed the results in each subagent prompt. Subagents must NOT issue `run_in_terminal` calls; VS Code exposes one shared persistent terminal and concurrent shell commands from separate subagents will interleave and corrupt output.
-- **Issue all subagents in one batch per wave.** `runSubagent` calls only execute in parallel when issued in the same assistant tool-call batch (the same response turn). Sequential `runSubagent` calls run serially and negate the benefit of parallel review. Always dispatch the full wave in one turn.
-- **Cap concurrent subagents at 2 in normal mode; 3 maximum per wave in safety mode.** Launching more agents simultaneously can exceed VS Code's internal resource limits and cause agents to silently hang or return incomplete results.
-- **Do not share mutable workspace state between concurrent subagents.** Each subagent receives a self-contained prompt with all needed diff context inline. Do not have one subagent write files that another subagent will read during the same wave.
-- **If a subagent returns no output or hangs, do not retry in parallel.** Re-run it alone in a follow-up turn with a simplified prompt before escalating.
-
-## Required operating mode
-- The parent reviewer agent must own the final review and synthesis.
-- All output must be formatted using the provided templates to ensure consistency and clear AI attribution:
-  - Use `templates/subagent-output.md` for each subagent's formatted findings
-  - Use `templates/reviewer-output.md` for the final synthesized review
-- Every output must clearly identify the reviewer(s) as AI and include the agent name(s) responsible
-- Discover available agents from the `agents/` directory before selecting reviewers (see Agent discovery).
-- Review the actual diff first before launching subagents. Collect all terminal output (stats, hunks, file lists) before issuing any `runSubagent` call.
-- Start multiple subagents in parallel whenever the change is non-trivial. Issue all subagents for a wave in one tool-call batch (see VS Code parallel execution constraints).
-- Use a minimum of 2 reviewers for any non-trivial review.
-- Ensure one reviewer covers general code quality and correctness.
-- Each subagent must receive a clear lens, relevant file set, and explicit instructions to return findings rather than generic commentary.
-- Subagents should return all material findings in scope; classification of merge requirement is reserved for the parent reviewer.
-- Prefer specialist independence: do not ask one subagent to incorporate another subagent's opinion.
-- Deduplicate overlapping findings in the parent review and keep the strongest version.
-- If a specialist area is not relevant, skip that subagent and state that in the coverage summary.
-- The final review must be evidence-oriented, concise, and prioritized by user impact and regression risk.
-- The final review must list must-change findings explicitly and place them before non-blocking observations.
+## Execution constraints (VS Code / parallelism)
+- Parent reviewer must pre-fetch and inline all diff context for subagents.
+- Dispatch all subagents in one tool-call batch per wave.
+- Cap concurrent subagents at 2 (normal) or 3 (safety).
+- Subagents must not run terminal commands (`run_in_terminal`) or share mutable workspace state.
 
 ## Large-project safety mode
-Use this mode whenever the review target is large or likely to exceed context limits.
+Trigger when >150 changed files or >10,000 changed lines. Triage with `--name-only`/`--stat`/`--numstat` to map hotspots, then deep-review in chunks (≤25 files or ≈2,500 lines) in waves. Report partial coverage explicitly.
 
-- Trigger safety mode if any of these are true:
-   - More than 150 changed files.
-   - More than 10,000 changed lines (`added + deleted`).
-   - `git diff` output is too large to review in one pass.
-- In safety mode, do a 2-pass review:
-   - Pass 1 (triage): collect `--name-only`, `--stat`, `--numstat`, map risk hotspots, and select lenses.
-   - Pass 2 (deep review): review prioritized chunks only, then optionally continue with remaining chunks.
-- Chunking rules:
-   - Use chunks of up to 25 files or about 2,500 changed lines, whichever comes first.
-   - Group by concern (auth, infra, UI, data model, tests) so each subagent prompt stays focused.
-   - Include only the chunk-specific hunks and minimal surrounding context.
-- Parallelism limits:
-   - Dispatch at most 2 subagents per wave in normal mode; at most 3 per wave in safety mode.
-   - In VS Code, all agents in a wave must be issued in the same tool-call batch; do not split a wave across turns.
-   - If more lenses/chunks are needed, process in waves and synthesize incrementally between turns.
-- Reporting behavior:
-   - If review is partial due to scale, state coverage explicitly and list unreviewed areas.
-   - Prioritize merge-blocking findings first; defer lower-risk commentary until critical surfaces are covered.
+## Parallel review workflow (high level)
+1. Set review target (prefer merge-base diff).
+2. Discover agents and pick lenses (always include code-and-QA).
+3. Collect and inline chunked context.
+4. Dispatch subagents in a single wave with embedded hunks.
+5. Synthesize, dedupe, mark `must-change`, and produce final review.
 
-## Parallel review workflow
-1. Establish the review target
-   - Identify the diff, commit range, PR, or changed files.
-   - If the user does not provide one, determine the repository default branch and review the current branch against it.
-   - Prefer the merge-base diff for branch review, for example `git diff <default-branch>...HEAD`, so the review covers only changes introduced by the current branch.
-    - Helpful command sequence when no review target is provided:
-       ```bash
-       default_branch="$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')"
-       if [ -z "$default_branch" ]; then
-          default_branch="$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')"
-       fi
-       [ -n "$default_branch" ] || { echo "Could not determine default branch"; exit 1; }
+## Agent discovery & lens mapping
+Scan `agents/*.agent.md` for `name` and `description`. Map lenses by keywords: code/QA, security, devops, UX, performance, architecture. Prefer the most focused agent; fall back to inline prompts when needed.
 
-       git fetch origin "$default_branch" --quiet
-       git diff --stat "origin/$default_branch...HEAD"
-          git diff --name-only "origin/$default_branch...HEAD"
-          git diff --numstat "origin/$default_branch...HEAD"
-       ```
-      - Only run full `git diff` on selected high-risk chunks, not the entire branch, when the change is large.
-   - If the default branch cannot be determined from repository metadata or git configuration, ask the user instead of guessing.
-   - Confirm whether the user wants findings only or also suggested fixes.
-2. Discover available agents
-   - Scan the `agents/` directory (relative to the workspace root) for all `*.agent.md` files.
-   - For each file, read the `name` and `description` frontmatter fields.
-   - Build a candidate roster: a list of `{ name, description }` pairs representing agents available for selection.
-   - If no `agents/` directory exists, proceed using inline lens prompts only (see Prompt patterns for specialist subagents).
-3. Gather baseline context
-   - Start from changed-file inventory and stats before reading file bodies.
-   - Read only changed files and directly related surrounding code paths.
-   - Check tests, build files, configs, and any touched documentation when relevant.
-   - Use `Explore` first if the repository area is unfamiliar or dependency tracing is needed.
-   - Prefer `rg`-based targeted lookups and symbol-level reads over full-file reads for large changes.
-4. Choose specialist reviewers
-   - Determine which review lenses are needed based on what the diff touches (see Branching logic).
-   - For each required lens, select the best-matching agent from the candidate roster by comparing the lens intent against each agent's `description`. Use keyword and intent matching: an agent whose description mentions "security", "auth", or "threat" matches the security lens; one mentioning "UX", "accessibility", or "front-end" matches the UX lens; one mentioning "CI/CD", "deployment", or "infrastructure" matches the DevOps lens; one mentioning "correctness", "maintainability", "QA", or "test" matches the code-and-QA lens; one mentioning "architecture", "scalability", "system design", or "principal" matches the architecture lens; one mentioning "performance" or "optimization" matches the performance lens.
-   - If multiple agents match a lens, prefer the one whose description is most specific to that lens.
-   - If no agent matches a lens, use the inline prompt pattern for that lens with a generic subagent invocation.
-   - Always start with a code-and-QA lens. Add additional lenses only when the diff justifies them.
-   - Add a performance lens when hot paths, data processing loops, or profiling concerns are touched.
-   - Add a DevOps lens when CI/CD, infra, runtime config, observability, rollout, or operational behavior is touched.
-   - Add a security lens for auth, data handling, trust boundaries, secrets, dependency, or abuse-case risk.
-   - Add a UX lens for user-facing behavior, accessibility, interaction design, responsive impact, or copy.
-   - Omit lenses that are clearly irrelevant to the diff, but keep the minimum reviewer count of 2.
-5. Dispatch subagents in parallel
-   - **VS Code requirement:** Issue all subagents in a wave as a single tool-call batch in one response turn. Do not interleave agent calls with other tool calls in the same turn.
-   - **VS Code requirement:** Embed all diff context (hunks, file stats, file content) inline in each subagent prompt. Do not ask subagents to run terminal commands or fetch context themselves.
-   - Give each one the same change summary, but only chunk-specific diff context.
-   - When a matched agent was found, invoke it by name using `runSubagent` with that agent name.
-   - When falling back to an inline prompt, invoke a generic subagent and include the lens-specific prompt from the Prompt patterns section.
-   - Tailor the ask to that specialist's lens.
-   - Instruct them to return findings formatted using `templates/subagent-output.md` with their agent name clearly identified.
-   - Instruct them to mark themselves as an AI agent in the output.
-   - Request complete material findings, open questions, and notable testing gaps.
-   - Do not ask subagents to decide merge gating (`must-change` vs `non-blocking`); the parent reviewer decides this during synthesis.
-   - In safety mode, run subagents in waves (max 3 concurrent per wave) and merge findings after each wave before starting the next.
-6. Aggregate results in the parent reviewer
-   - Merge duplicate findings.
-   - Normalize severity and merge impact labels (`must-change` vs `non-blocking`) so blockers are unambiguous.
-   - Downgrade purely stylistic comments unless they create real maintenance or usability risk.
-   - Resolve disagreements by favoring evidence from the code, tests, or documented behavior.
-7. Produce the final review
-   - Must-change findings first, then remaining findings ordered by severity.
-   - Open questions second.
-   - Brief change summary last, only if useful.
+## Prompt template
+"Review this change for <lens> and return material findings with evidence and open questions; do not decide merge gating." Example lenses: security, UX, devops, performance, architecture.
+
+## Parent reviewer checklist (essential)
+- Inspect diff and assess scale.
+- Prefetch context and choose lenses.
+- Dispatch subagents in one batch.
+- Synthesize findings; list `must-change` first.
+- Format final output with the reviewer template.
+
+## Guardrails & quality bar
+- Do not expose secrets or credentials.
+- Do not paste massive raw diffs; chunk instead.
+- Do not run terminal commands inside subagents.
+- Favor evidence from code/tests; downgrade pure style nits.
+- If confidence is low, convert issues into open questions.
+
+## Examples & appendix
+Move long examples, extended checklists, and scripts to `EXAMPLES.md` or `SKILL.md.bak`.
+
 
 ## Branching logic
 In all cases, discover available agents first (see Agent discovery) and map lenses to agents by description before dispatching.
