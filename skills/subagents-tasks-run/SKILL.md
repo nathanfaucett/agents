@@ -10,13 +10,39 @@ This skill consumes a plan folder (named `${descriptive-name}`) that contains a 
 1. Locate the specified plan folder (e.g., `${descriptive-name}/`) in the chosen output directory.
 	- Default output directory: `/tmp/` unless the workspace contains a `.tasks` folder or the user explicitly requests a different output location. If a `.tasks` folder exists, prefer and use `.tasks/` inside the workspace.
 	- File/folder pattern: the plan folder must follow the `subagents-tasks` convention: `${descriptive-name}/` containing `tasks.md` (control file) and `taskN.md` files (task files). Filenames inside the folder should follow the pattern `tasks.md` and `task1.md`, `task2.md`, ...
-2. Read `${descriptive-name}/tasks.md` and parse the `Sub-agent workflow` section to identify the next pending `taskN.md` entry.
-3. Read the referenced `${descriptive-name}/taskN.md` to load full task context, acceptance criteria, dependencies, and `Next sub-agent` command.
-4. Update `tasks.md` to mark the task as `In progress` and append a brief execution note (timestamp, executor id).
-5. Execute the identified task in a sub-agent with a fresh context (the sub-agent should follow instructions inside the `taskN.md`). Capture outputs, logs, and any blockers.
-6. Update the `taskN.md` with execution details: outputs, artifacts produced, blockers, and a short one-line standup update. Add an explicit instruction for the next sub-agent if applicable.
-7. Update `tasks.md` to move the task from `In progress` to `Done` (or back to `Pending` if blocked), include a link to the updated `taskN.md`, and add `Signals` for the next sub-agent (e.g., `run-task: ${descriptive-name}/task3.md`).
-8. If the input is a single embedded Agents tasks file (no plan folder), offer to split it into a `${descriptive-name}/` folder with `tasks.md` and `taskN.md` files and proceed; otherwise operate in-place but prefer the folder model.
-9. Write all modified files back to the filesystem using the agent filesystem actions (`create_file`/overwrite), ensuring directories exist before writing. Follow the `subagents-tasks` output obligations:
-	- Use the same naming and folder structure as `subagents-tasks` (folder `${descriptive-name}/`, `tasks.md`, and `taskN.md` files).
-	- Include all created/changed file paths in the final summary.
+2. Read `${descriptive-name}/tasks.md` and parse the `Sub-agent workflow` section to build an ordered queue of pending `taskN.md` entries. If no pending tasks exist, exit.
+3. For each pending `taskN.md` in the queue, run the task to completion before proceeding to the next:
+	- Read the referenced `${descriptive-name}/taskN.md` to load full task context, acceptance criteria, dependencies, estimated effort, and the `Next sub-agent` command.
+	- Update `tasks.md` to mark this `taskN.md` as `In progress` and append an execution note (timestamp, executor id).
+	- Loop: repeatedly invoke a sub-agent to perform the work described in `taskN.md` until the task is explicitly marked `Done` or a terminal blocker/timeout occurs:
+		- Invoke a sub-agent (for example via `runSubagent`) with the `Next sub-agent` command and the current `taskN.md` content as context.
+		- Capture outputs, logs, and any updates the sub-agent made to the task file.
+		- Re-read `taskN.md` and check for a clear `Done` marker (for example `Status: Done`, an explicit next-state signal, or that acceptance criteria are met), or detect a blocker.
+		- If `Done`: update `tasks.md` to move the task to `Done`, include a short execution note and a link to the updated `taskN.md`, then break the loop and continue to the next pending task.
+		- If blocked: append blocker details to `taskN.md` and `tasks.md`, add a `Signals` entry for human review or automated remediation, and either retry after a configurable backoff (default: a small number of retries) or move the task back to `Pending/Blocked` for manual intervention depending on policy.
+		- If the sub-agent made progress but not `Done`, continue the loop and invoke the sub-agent again with the updated context.
+	- After the task completes or is escalated, add `Signals` in `tasks.md` for the next sub-agent (for example `run-task: ${descriptive-name}/task3.md`).
+4. After processing all pending tasks, write all modified files back to the filesystem using the agent filesystem actions (`create_file`/overwrite), ensuring directories exist before writing.
+5. Behavior for single-file inputs, errors, and constraints:
+	- If the input is a single embedded Agents tasks file (no plan folder), offer to split it into a `${descriptive-name}/` folder with `tasks.md` and `taskN.md` files and proceed; otherwise operate in-place but prefer the folder model.
+	- Implement reasonable retry, timeout and maximum-attempt policies to avoid infinite loops; record attempts and timestamps in `taskN.md`.
+	- Ensure all state transitions are explicit and machine-friendly (`Pending`, `In progress`, `Done`, `Blocked`) and that `tasks.md` references each `taskN.md`.
+6. Signals and machine flags (examples):
+	- `run-task: ${descriptive-name}/taskN.md` — request execution of a task.
+	- `task-done: ${descriptive-name}/taskN.md` — mark completion.
+	- `task-blocked: ${descriptive-name}/taskN.md` — flag a blocker for manual review.
+7. Logging and audit:
+	- For every state change, append an audit entry with timestamp, executor id, and a short message to both the `taskN.md` and `tasks.md` to aid traceability.
+8. Validation checklist (ensure these are satisfied before finishing):
+	- Problem + outcomes are clear
+	- Success criteria measurable
+	- Scope is clearly surfaced
+	- Tasks actionable and upper bound ready
+	- No missing dependencies
+	- Sub-agent state transitions are defined in the file
+	- Control file created and references all task files
+	- Each task has a standalone markdown file with context and `Next sub-agent` command
+	- All file paths included in final summary
+	- `tasks.md` created inside `${descriptive-name}/` and references all `taskN.md` files
+	- Each `taskN.md` is created inside `${descriptive-name}/` with context and `Next sub-agent` command
+	- All created file paths included in final summary
