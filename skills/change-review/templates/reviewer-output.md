@@ -20,27 +20,16 @@ description: Master template for the final synthesized code review from the pare
 
 ---
 
-## Must-Change Before Merge
-{{#if must_change_items}}
-{{#each must_change_items}}
-- **{{issue_title}}** {{file_path}}:{{line_range}}
-  - **Why required**: {{required_reason}}
-  - **Owner hint**: {{owner_hint}}
-{{/each}}
-{{else}}
-None.
-{{/if}}
+## Blockers
+> Issues that must be resolved before this change can merge.
 
----
-
-## Critical Findings
-{{#if critical_findings}}
-{{#each critical_findings}}
-### {{severity}}: {{issue_title}}
-- **Location**: {{file_path}}:{{line_range}}
-- **Impact**: {{impact_level}} — {{impact_description}}
-- **Why it matters**: {{explanation}}
-- **Suggested fix**: {{suggested_fix}}
+{{#if blockers}}
+{{#each blockers}}
+### {{issue_title}}
+- **File**: `{{file_path}}`
+- **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
+- **Why blocking**: {{reason}}
+- **Fix**: {{suggested_fix}}
 - **Identified by**: {{agent_name}}
 {{/each}}
 {{else}}
@@ -49,14 +38,57 @@ None.
 
 ---
 
-## All Findings (by severity)
-{{#each findings_by_severity}}
-### {{severity_level}} ({{count}} finding{{#if_not_one}}s{{/if_not_one}})
-{{#each findings}}
-- **{{issue_title}}** {{file_path}}:{{line_range}}  
-  {{explanation}}
+## Bugs
+> Defects causing incorrect or undefined behavior.
+
+{{#if bugs}}
+{{#each bugs}}
+### {{issue_title}}
+- **File**: `{{file_path}}`
+- **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
+- **Impact**: {{impact_description}}
+- **Why it matters**: {{explanation}}
+- **Fix**: {{suggested_fix}}
+- **Identified by**: {{agent_name}}
 {{/each}}
+{{else}}
+None.
+{{/if}}
+
+---
+
+## Breaking Changes
+> Changes that alter public contracts, APIs, or user-facing behavior in a backwards-incompatible way.
+
+{{#if breaking_changes}}
+{{#each breaking_changes}}
+### {{issue_title}}
+- **File**: `{{file_path}}`
+- **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
+- **What breaks**: {{what_breaks}}
+- **Affected callers / consumers**: {{affected_consumers}}
+- **Migration path**: {{migration_path}}
+- **Identified by**: {{agent_name}}
 {{/each}}
+{{else}}
+None.
+{{/if}}
+
+---
+
+## Suggestions
+> Non-blocking improvements: style, maintainability, performance, test coverage gaps, and minor UX polish.
+
+{{#if suggestions}}
+{{#each suggestions}}
+- **{{issue_title}}** — `{{file_path}}` `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`  
+  {{explanation}}  
+  _Suggestion_: {{suggested_fix}}  
+  _From_: {{agent_name}}
+{{/each}}
+{{else}}
+None.
+{{/if}}
 
 ---
 
@@ -99,7 +131,7 @@ None identified beyond findings above.
 
 ## Change Summary
 **Changed Files**: {{changed_file_count}} files  
-**Lines Changed**: {{lines_added}} added, {{lines_deleted}} deleted  
+**Lines Changed**: `{{lines_added}}` added, `{{lines_deleted}}` deleted  
 
 {{change_summary_description}}
 
