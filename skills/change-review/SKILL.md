@@ -9,11 +9,10 @@ Use this skill for structured pre-merge review.
 
 - Default stance: blocker-first and risk-first.
 - Subagents report all material findings; only the parent reviewer decides `must-change`.
-- Process: inspect the diff, discover local agents, match lenses from agent `description`, launch parallel reviewers, then synthesize one final review.
+- Process: see "Parallel review workflow" below.
 - Use at least 2 reviewers for any non-trivial change: one code-and-QA reviewer plus relevant specialists.
 - Use `Explore` for read-only repo context when the diff touches unfamiliar areas or needs dependency tracing.
 - For large or high-churn changes, triage first and review in chunks using file lists, stats, and targeted hunks rather than a full raw diff.
-- If no local `agents/` directory exists, or no agent matches a lens, fall back to the inline prompt patterns in this file.
 
 ## When to use
 - A PR, patch, or local diff needs structured review before merge.
@@ -95,7 +94,6 @@ These rules apply in VS Code Copilot agent mode:
 
 - Pre-fetch all context before launching subagents. Run every `run_in_terminal` call in the parent turn and embed results in each subagent prompt. Subagents must not call `run_in_terminal`.
 - Launch every subagent in a wave in one tool-call batch. Sequential `runSubagent` calls run serially.
-- Cap concurrency at 2 subagents in normal mode, 3 in safety mode.
 - Do not share mutable workspace state between concurrent subagents. Each prompt must be self-contained.
 - If a subagent hangs or returns nothing, retry it alone in a later turn with a simpler prompt.
 
@@ -103,7 +101,6 @@ These rules apply in VS Code Copilot agent mode:
 - The parent reviewer owns the final review and synthesis.
 - Review the actual diff before launching subagents.
 - Discover available agents from the local `agents/` directory before selecting reviewers.
-- Use at least 2 reviewers for any non-trivial review.
 - Ensure one reviewer covers general code quality and correctness.
 - Give each subagent a clear lens, relevant file set, explicit instructions to return findings, and inline diff context.
 - Keep specialists independent; do not ask one reviewer to incorporate another reviewer's opinion.
@@ -126,8 +123,7 @@ Use this mode when the review target is large or likely to exceed context limits
   - Group by concern such as auth, infra, UI, data model, tests
   - Include only chunk-specific hunks plus minimal surrounding context
 - Parallelism:
-  - Max 2 subagents per wave in normal mode, 3 in safety mode
-  - In VS Code, every wave must launch in one tool-call batch
+  - Follow VS Code operating constraints for launching subagent waves.
   - Process extra chunks or lenses in later waves and synthesize incrementally
 - Reporting:
   - If review is partial, state coverage clearly and list unreviewed areas
@@ -172,7 +168,7 @@ Use this mode when the review target is large or likely to exceed context limits
    - If none match, use the inline lens prompt.
    - Always start with code-and-QA; add other lenses only when justified.
 5. Dispatch subagents in parallel.
-   - Launch a full wave in one tool-call batch.
+  - Follow VS Code operating constraints for launching subagent waves.
    - Embed the relevant hunks, stats, and file context directly in each prompt.
    - Use named agents when matched; otherwise use a generic subagent plus the lens prompt.
    - Ask for findings, open questions, and testing gaps.
@@ -199,7 +195,6 @@ Discover available agents first, then map lenses to agents by description.
 - If critical behavior changed but test evidence is weak or absent, increase code-and-QA depth and add a dedicated QA agent only if one exists.
 - If the diff changes authentication, authorization, payments, file upload, cryptography, tenant isolation, or external callbacks, security is mandatory.
 - If the diff touches hot paths, data loops, or throughput-sensitive code, add performance.
-- If the diff is small but risky, run fewer subagents but do not skip the main risk lens; still maintain at least 2 reviewers.
 - If the diff is large and mixed, partition by concern and apply safety mode.
 - If subagents return no findings, say so explicitly and still report residual risks or testing gaps if confidence is limited.
 
@@ -247,9 +242,7 @@ The skill succeeds when it:
 - Do not paste massive raw diffs into one prompt; use chunked, targeted hunks.
 - Do not scan the entire repo when only changed paths matter.
 - Do not launch unbounded parallel subagents.
-- Do not run `run_in_terminal` inside a subagent.
 - Do not split one wave of subagents across turns.
-- Do not exceed 2 concurrent subagents in normal mode or 3 in safety mode.
 
 ## Agent discovery
 Before selecting reviewers, build a roster from `agents/*.agent.md`:
@@ -277,7 +270,6 @@ Before selecting reviewers, build a roster from `agents/*.agent.md`:
 - [ ] Named agents used when matched; inline prompts used otherwise
 - [ ] All terminal commands completed before launching subagents
 - [ ] Each wave launched in a single tool-call batch
-- [ ] Wave size capped at 2 or 3 in safety mode
 - [ ] Each prompt is self-contained with inline diff context
 - [ ] Chunking and waves used for large diffs
 - [ ] Subagent outputs use `templates/subagent-output.md`
