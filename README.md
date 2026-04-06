@@ -30,12 +30,15 @@ done
 
 Current local skills:
 
-- `agent-ready`: Analyze a codebase for gaps that hinder autonomous agents and provide prioritized recommendations.
-- `change-review`: Run a structured, multi-lens review and synthesize actionable findings before merge.
-- `poc`: Produce a focused proof-of-concept plan with feasibility assessment and minimal experiment artifacts.
-- `review`: Run a review process or analysis (see SKILL.md for details).
-- `subagents-tasks`: Convert PRDs/issues/todos into iterative task plans with explicit sub-agent workflow signals.
-- `subagents-tasks-run`: Execute the next pending task from a plan and update workflow state files.
+- `agent-ready`: Analyzes a codebase to identify gaps, inconsistencies, and friction points that hinder autonomous agents or developers from effectively understanding, modifying, and extending the project.
+- `change-review`: Provides a structured code review of a proposed change, including feedback on correctness, style, maintainability, and potential impacts.
+- `poc`: Produces a focused proof-of-concept plan, feasibility assessment, and minimal experiment artifacts for a feature, integration, or architectural approach.
+- `refactor`: Refactor code to improve its structure, readability, and maintainability without changing its external behavior.
+- `review`: Review or analyze something, such as a document, code, or data, to provide feedback, identify issues, or suggest improvements.
+- `rewrite`: Performs a structured, opinionated, and safety-conscious full rewrite that intentionally introduces breaking changes.
+- `specs`: Runs a deterministic Spec-Driven Development (SDD) workflow using fixed files, hard phase gates, and explicit redirection.
+- `subagents-tasks`: Converts input into an iterative plan file containing Pending/In progress/Done sections and next-subagent signals for subagents to consume and update.
+- `subagents-tasks-run`: Executes the next pending task from a control Agents tasks markdown and updates both the control and per-task files with progress and signals for subsequent sub-agents.
 
 Install all local skills:
 
