@@ -27,6 +27,16 @@ This skill defines a strict four-phase SDD workflow:
    Generate code from specs and validate against requirements.
 
 The workflow is gate-driven. Advancing to the next phase is blocked unless all gate conditions are satisfied.
+Default execution mode is continue-forward: after each successful phase/task completion, immediately advance to the next deterministic step unless an open question or blocker exists.
+
+## Forward Progress Default
+
+Agents using this skill must prefer automatic progression.
+
+1. Continue to the next phase/task immediately when gates pass and no questions file exists.
+2. Stop only when there is an open question (a phase *.questions.md file exists) or a hard blocker.
+3. Never wait for manual confirmation between successful deterministic steps.
+4. When stopping, set a single deterministic redirect in go_to for the exact unblock file.
 
 ## Required Repository Layout
 
@@ -171,6 +181,11 @@ Questions behavior is strict:
 4. Update status.yaml to complete for phase P.
 5. Only then may phase P+1 start.
 
+No-open-question rule:
+
+1. Absence of the phase questions file means no open question is pending for that phase.
+2. In that case, agents must continue-forward automatically.
+
 If either gate condition fails, hard-refuse advancement and set deterministic redirect:
 
 - go_to: <exact-file-path>
@@ -265,13 +280,14 @@ For active spec folder specs/NN_feature_name/:
    Set state: blocked.
    Set next to current phase.
    Set go_to to one exact file that unblocks progress.
-   Stop phase advancement.
+   Stop phase advancement only because a blocker/open question exists.
 4. If gate passes:
    Mark current phase complete (if not already).
    Advance phase to next.
    Set state: in_progress.
    Set next accordingly.
    Set go_to to next phase artifact.
+   Continue immediately into the next phase artifact workflow.
 5. Update updated_at.
 
 When next is done:
@@ -296,6 +312,7 @@ When next is done:
 5. Only one task may be in_progress at a time; all others must be pending or done.
 6. If all tasks are done and none blocked, Task phase is complete and Implement phase may start.
 7. If any task is blocked, Task phase is blocked and go_to must point to the blocked task file.
+8. If a task completes and another pending task exists with no open question/blocker, immediately start the next pending task.
 
 ## Validation Checks (Human Or Agent)
 
@@ -338,5 +355,6 @@ When executing this skill, agents should produce:
    - active_task
    - next_signal (e.g., run-task: specs/NN_feature_name/tasks/03_api.md)
    - This enables sub-agent orchestration and navigation
+8. Continue-forward behavior in practice: do not pause between successful steps unless a questions file or blocker is present
 
 
