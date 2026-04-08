@@ -2,7 +2,7 @@
 name: specs
 description: |
   Runs a deterministic Spec-Driven Development (SDD) workflow using fixed files,
-  hard phase gates, and explicit redirection so humans and agents can execute work
+   hard phase gates and explicit state transitions so humans and agents can execute work
    with end-to-end traceability. Invoke when defining, planning, tasking, and
   implementing a feature from spec artifacts under specs/.
 ---
@@ -36,7 +36,7 @@ SDD has four ordered phases:
 1. Continue-forward by default: advance immediately when gates pass.
 2. Stop only for an open phase questions file or a hard blocker.
 3. Never pause for manual confirmation between successful deterministic steps.
-4. On stop, set one exact `go_to` file path that unblocks progress.
+4. Do not use explicit redirect pointers; flow is derived from phase state, dependencies, and queue order.
 
 ## Required Repository Layout
 
@@ -103,10 +103,12 @@ updated_at: 2026-04-06T00:00:00Z
 
 Each tasks/ folder must contain:
 
-- tasks-index.yaml (machine-readable task queue and state)
+- index.yaml (machine-readable task queue and authoritative runtime task state)
 - tasks-audit-log.yaml (append-only audit log of all transitions)
 
-tasks-index.yaml schema:
+`tasks/index.yaml` is authoritative for task runtime state. If task file metadata differs, `tasks/index.yaml` wins.
+
+index.yaml schema:
 
 ```yaml
 current_task: 02_api-task.md
@@ -144,7 +146,7 @@ tasks-audit-log.yaml schema:
    task: 02_api-task.md
    from_state: pending
    to_state: in_progress
-   artifact_changed: tasks-index.yaml
+   artifact_changed: index.yaml
    note: "Started API task"
 ```
 
@@ -181,7 +183,6 @@ Required keys:
 - phase
 - state
 - next
-- go_to
 - updated_at
 
 Allowed enums:
@@ -190,15 +191,12 @@ Allowed enums:
 - state: in_progress | blocked | complete
 - next: specify | plan | task | implement | done
 
-go_to must be a deterministic, exact relative file path from the spec folder.
-
 Example phase-status.yaml:
 
 ```yaml
 phase: specify
 state: blocked
 next: specify
-go_to: requirements.questions.md
 updated_at: 2026-04-06T00:00:00Z
 ```
 
@@ -220,13 +218,6 @@ If either gate condition fails, do not advance. Set:
 
 - state: blocked
 - next: current phase
-- go_to: exact file path needed to unblock
-
-Examples:
-
-- go_to: requirements.questions.md
-- go_to: specification.md
-- go_to: phase-status.yaml
 
 ## Phase Artifacts And Completion Targets
 
@@ -277,7 +268,7 @@ title: Setup feature scaffold
 trace_to:
   - R-001
   - US-001
-status: pending|in_progress|done|blocked
+status: pending|in_progress|done|blocked|failed
 depends_on: [] # list of task_ids
 assigned_agent: agent-name
 next_agent: agent-name
@@ -286,6 +277,8 @@ acceptance_checks:
 max_attempts: 3
 timeout_minutes: 30
 ```
+
+Task files define intent and traceability. Runtime state is tracked in `tasks/index.yaml`.
 
 trace_to entries must reference IDs defined in specification.md.
 
@@ -297,8 +290,10 @@ Legal transitions:
 - in_progress -> done
 - in_progress -> blocked
 - blocked -> pending (after unblock)
+- blocked -> failed (when max_attempts reached)
+- in_progress -> failed (when max_attempts reached)
 
-Illegal transitions must hard-refuse and set go_to to the exact file to fix.
+Illegal transitions must hard-refuse.
 
 Exactly one in_progress task is allowed per spec folder.
 Cross-spec parallelism is allowed only through specs/status.yml active_tasks.
@@ -326,10 +321,10 @@ For active spec folder specs/NN_feature_name/:
 2. Read phase-status.yaml.
 3. Evaluate phase gate for phase-status.yaml phase.
 4. If gate fails:
-   Set `state: blocked`, `next: <current phase>`, and `go_to` to one exact unblock file.
+   Set `state: blocked` and `next: <current phase>`.
    Stop.
 5. If gate passes:
-   Mark current phase complete if needed, advance to next phase, set `state: in_progress`, set `next`, and set `go_to` to the next artifact.
+   Mark current phase complete if needed, then advance to next phase and set `state: in_progress` with `next`.
    Continue immediately.
 6. Update `phase-status.yaml`, `specs/status.yml`, and `updated_at` fields.
 
@@ -338,24 +333,24 @@ When next is done:
 - phase: implement
 - state: complete
 - next: done
-- go_to: implementation.md
 
 ### Sub-Agent Task Run Loop
 
-1. Read tasks/tasks-index.yaml and select the next pending task by queue_order.
-2. Mark the task in_progress in tasks-index.yaml and append a tasks-audit-log.yaml entry.
-3. Invoke the assigned_agent (sub-agent) with the task file and current spec context.
-4. Sub-agent must:
+1. Read tasks/index.yaml and compute eligible pending tasks where all `depends_on` task_ids are `done`.
+2. If multiple tasks are eligible, choose by queue_order. `depends_on` always overrides queue_order.
+3. Mark the chosen task in_progress in tasks/index.yaml and append a tasks-audit-log.yaml entry.
+4. Invoke the assigned_agent (sub-agent) with the task file and current spec context.
+5. Sub-agent must:
    - Attempt the task (max_attempts enforced)
-   - Update status in both tasks-index.yaml and the task file
+   - Update runtime status in tasks/index.yaml
    - Validate acceptance_checks
-   - Mark done or blocked
-   - If blocked, set blocker_reason and go_to to the exact file to fix
+   - Mark done, blocked, or failed (failed when attempts reach max_attempts)
+   - If blocked or failed, set blocker_reason
    - Append tasks-audit-log.yaml entry for every transition
-5. Within a single spec folder, only one task may be in_progress at a time; all others must be pending or done.
-6. If all tasks are done and none blocked, Task phase is complete and Implement phase may start.
-7. If any task is blocked, Task phase is blocked and go_to must point to the blocked task file.
-8. If a task completes and another pending task exists with no open question/blocker, immediately start the next pending task.
+6. Within a single spec folder, only one task may be in_progress at a time; all others must be pending, done, blocked, or failed.
+7. If all tasks are done and none are blocked or failed, Task phase is complete and Implement phase may start.
+8. If any task is blocked or failed, Task phase is blocked.
+9. If a task completes and another eligible pending task exists with no open question/blocker, immediately start the next eligible task.
 
 ## Validation Checks (Human Or Agent)
 
@@ -367,24 +362,69 @@ Run these checks before advancing phases:
 4. phase/state/next values are in allowed enums.
 5. Current phase completion is recorded in phase-status.yaml.
 6. Current phase questions file does not exist.
-7. If blocked, go_to points to exactly one existing file path needed to unblock.
+7. If blocked, blocking reason is recorded in the relevant artifact.
 8. tasks/ files are zero-padded, sequential, and gapless.
 9. Every task file contains trace_to with at least one requirement/story ID.
 10. Every trace_to ID resolves to an ID in specification.md.
 
-11. tasks/tasks-index.yaml exists, parses as YAML, and matches task files.
+11. tasks/index.yaml exists, parses as YAML, and matches task files.
 12. For each spec folder, only one in_progress task at a time.
-13. All task status values are legal (pending, in_progress, done, blocked).
+13. All task status values are legal (pending, in_progress, done, blocked, failed).
 14. All assigned_agent and next_agent fields are valid agent names listed in AGENTS.md.
 15. tasks-audit-log.yaml exists and records all transitions.
-16. Blocked task must include blocker_reason and go_to must target exact unblock file.
-17. phase-status.yaml and tasks/tasks-index.yaml must agree on phase-level state.
+16. Blocked or failed task must include blocker_reason.
+17. phase-status.yaml and tasks/index.yaml must agree on phase-level state.
 18. specs/status.yml exists, parses as YAML, and includes active_specs and active_tasks.
 19. Every active_tasks entry points to an existing spec folder and task file.
-20. specs/status.yml active_tasks entries must agree with per-spec tasks/tasks-index.yaml in_progress states.
+20. specs/status.yml active_tasks entries must agree with per-spec tasks/index.yaml in_progress states.
 21. Parallel execution is legal only when each active_tasks entry references a distinct task path and distinct spec folder.
+22. Next runnable task selection always respects `depends_on` before queue_order.
 
-If any check fails, do not advance phase; set blocked status and deterministic go_to.
+If any check fails, do not advance phase; set blocked status deterministically.
+
+## Hardening Recommendations
+
+Apply these controls to improve safety and recovery in automated execution.
+
+1. Use deterministic multi-file commit ordering.
+   - For every transition, write per-spec state first, then global orchestration, then append audit.
+   - If any write fails, stop and mark the current phase or task blocked with a blocker_reason.
+
+2. Tighten lock lease semantics for `specs/status.yml`.
+   - Define lease duration, renewal cadence, and explicit stale-lock takeover conditions.
+   - Include a fencing token on each successful lock acquisition to prevent split-brain writes.
+
+3. Keep `tasks/index.yaml` schema strict.
+   - Reject missing required keys for each task entry.
+   - Treat unknown status values as invalid and block progression.
+
+4. Enforce dependency graph validity before task execution.
+   - Refuse execution if any `depends_on` references an unknown task_id.
+   - Refuse execution if dependency cycles are detected.
+
+5. Keep dependency-first scheduling deterministic.
+   - Compute eligible tasks only from pending tasks whose dependencies are all done.
+   - Use `queue_order` only as tie-breaker among eligible tasks.
+
+6. Define terminal failure behavior.
+   - On max_attempts exhaustion, transition to failed and require blocker_reason.
+   - Do not auto-retry failed tasks; require explicit human or orchestrator reset.
+
+7. Require idempotent task execution.
+   - Tasks should be safe to re-run after partial failures.
+   - Record side effects and recovery notes in implementation artifacts when relevant.
+
+8. Strengthen timeout handling.
+   - On timeout, record transition in tasks-audit-log.yaml with reason code timeout.
+   - Increment attempts deterministically and apply normal blocked/failed rules.
+
+9. Standardize recovery on restart.
+   - Reconcile `phase-status.yaml`, `tasks/index.yaml`, and `specs/status.yml` before resuming work.
+   - If reconciliation fails, block deterministically and require state repair before execution continues.
+
+10. Add conformance fixtures for the state machine.
+   - Maintain valid and invalid YAML examples for transitions, dependencies, and lock races.
+   - Run these fixtures in CI to prevent regression in orchestration behavior.
 
 ## Output Expectations For Agents
 
@@ -392,10 +432,10 @@ When executing this skill, agents should produce:
 
 1. Deterministic status updates in phase-status.yaml
 2. Phase artifact edits only in the active phase unless explicitly unblocked
-3. Hard refusal to advance on gate failure with one go_to target
+3. Hard refusal to advance on gate failure
 4. Traceable outputs linking tasks and implementation back to requirement IDs
 5. All task state transitions and audit entries in tasks-audit-log.yaml
-6. All queue and agent assignments in tasks-index.yaml
+6. All queue and agent assignments in tasks/index.yaml
 7. AGENTS.md should remain navigation-only and point to specs/ and specs/status.yml
 8. Deterministic orchestration updates in specs/status.yml for active_specs and active_tasks (including parallel tasks)
 
