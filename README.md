@@ -3,12 +3,6 @@
 This repository contains local agent definitions under `agents/` and local skills
 under `skills/`.
 
-## SDD Navigation
-
-- Specs root: `specs/`
-- Cross-spec orchestration status: `specs/status.yml`
-- AGENTS navigation entrypoint: `AGENTS.md`
-
 ## Local Agents
 
 Current local agents:
