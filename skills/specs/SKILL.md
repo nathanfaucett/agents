@@ -9,6 +9,76 @@ description: |
 
 # Spec-Driven Development (SDD)
 
+---
+## Static Content Review (per review skill)
+
+### When to use
+- Reviewing this skill file or SDD artifacts for clarity, correctness, and completeness.
+- Reviewing SDD code or orchestration for duplication, maintainability, and readability risks.
+- Providing a second opinion before publishing or merging SDD process changes.
+
+### When not to use
+- Runtime debugging or execution failures that require running systems or logs.
+- Security audits or compliance checks that need specialized security workflows.
+- Tasks requiring direct implementation rather than analysis.
+- Reviews that depend on unavailable external business context.
+
+### Inputs
+- Content to review (document, code, or data).
+- Requested focus (for example: clarity, duplication, completeness, consistency).
+- Optional context: style guide, acceptance criteria, constraints, or target audience.
+
+### Outputs
+- Structured review report with:
+   1. Key findings (prioritized)
+   2. Duplications
+   3. Clarity/completeness gaps
+   4. Accuracy/consistency issues
+   5. Actionable improvements
+   6. Open questions (if context is missing)
+
+### Procedure
+1. Clarify scope only if review focus is ambiguous.
+2. Inspect content for duplication, ambiguity, inconsistency, and omission.
+3. Apply provided standards or default community conventions.
+4. Produce a concise, prioritized report with actionable fixes.
+5. Separate confirmed findings from context-dependent questions.
+
+### Best practices and constraints
+- Keep findings specific and evidence-based.
+- Distinguish objective issues from style preferences.
+- Prefer actionable recommendations over generic commentary.
+- Do not claim runtime behavior; this skill is static analysis only.
+
+### Gotchas and edge cases
+- Missing context can make valid patterns appear inconsistent; surface as open questions.
+- Very small snippets can hide dependencies; avoid overconfident conclusions.
+- Domain-specific correctness may require expert validation beyond this review.
+
+### Examples
+- "Review this requirements doc for missing acceptance criteria and ambiguity."
+- "Review this module for duplication and maintainability risks."
+- "Review this dataset description for consistency and clarity."
+
+### Acceptance criteria
+- Report is structured, prioritized, and actionable.
+- Findings clearly separate confirmed issues from open questions.
+- Recommendations are tied to observed content, not speculation.
+
+### Notes for agents
+- Ask at most one clarifying question when scope is unclear.
+- Cite exact sections or lines when available.
+- Keep output concise and decision-oriented.
+
+### Limitations
+- Does not execute code or validate runtime behavior.
+- May miss highly domain-specific issues without additional context.
+- Feedback quality depends on the completeness of provided inputs.
+
+---
+
+# Spec-Driven Development (SDD)
+
 ## When to use
 
 Use this skill when work must follow explicit spec artifacts with strict ordering, hard gates, and machine-readable status.
@@ -37,6 +107,7 @@ SDD has four ordered phases:
 2. Stop only for an open phase questions file or a hard blocker.
 3. Never pause for manual confirmation between successful deterministic steps.
 4. Do not use explicit redirect pointers; flow is derived from phase state, dependencies, and queue order.
+5. Never transition a phase or task to complete/done without recorded completion evidence in a required artifact.
 
 ## Required Repository Layout
 
@@ -215,6 +286,7 @@ Progression from phase P to P+1 is allowed only when both are true:
 
 1. The current phase artifact exists and is marked complete in status.yaml.
 2. The current phase questions file does not exist.
+3. Completion evidence for phase P exists in the phase artifact and in audit/log metadata.
 
 Questions behavior:
 
@@ -227,6 +299,42 @@ If either gate condition fails, do not advance. Set:
 
 - state: blocked
 - next: current phase
+
+## Evidence-First Completion Requirement
+
+All completion transitions are proof-gated. "Proof somewhere" is not optional and must be recorded in machine-readable form.
+
+Phase completion evidence:
+
+1. Before setting a phase to `complete`, add a `completion_evidence` block in the active phase artifact.
+2. `completion_evidence` must include at least one concrete verifier entry (artifact path, command output summary, or requirement coverage reference).
+3. If `completion_evidence` is missing or empty, hard-refuse the phase transition and set phase state to `blocked`.
+
+Task completion evidence:
+
+1. Before transitioning a task from `in_progress` to `done`, write evidence under `tasks/index.yaml` for that task entry.
+2. Required per-task key:
+
+```yaml
+tasks:
+   02_api-task.md:
+      status: done
+      completion_evidence:
+         - type: test|artifact|diff|check
+           ref: path-or-command
+           summary: short human-readable proof
+      updated_at: 2026-04-06T00:00:00Z
+```
+
+3. `completion_evidence` must contain at least one non-empty entry.
+4. The matching `audit.log` transition to `done` must include an `evidence_ref` field that points to the same proof source.
+5. If evidence is absent, transition to `blocked` (or keep `in_progress`) and record `blocker_reason: missing completion evidence`.
+
+Hard refusal example for missing evidence:
+
+```
+ERROR: Completion proof required before transition: in_progress -> done for 02_api-task.md. Missing tasks/index.yaml.tasks[02_api-task.md].completion_evidence.
+```
 
 ## Phase Artifacts And Completion Targets
 
@@ -378,8 +486,9 @@ When next is done:
    - Attempt the task (max_attempts enforced)
    - Update runtime status in tasks/index.yaml
    - Validate acceptance_checks
+   - Collect and write completion_evidence before any done transition
    - Mark done, blocked, or failed (failed when attempts reach max_attempts)
-   - If blocked or failed, set blocker_reason
+   - If blocked or failed, set blocker_reason (including missing completion evidence)
    - Append audit.log entry for every transition
 6. Within a single spec folder, only one task may be in_progress at a time; all others must be pending, done, blocked, or failed.
 7. If all tasks are done and none are blocked or failed, Task phase is complete and Implement phase may start.
@@ -413,6 +522,10 @@ Run these checks before advancing phases:
 20. specs/status.yaml active_tasks entries must agree with per-spec tasks/index.yaml in_progress states.
 21. Parallel execution is legal only when each active_tasks entry references a distinct task path and distinct spec folder.
 22. Next runnable task selection always respects `depends_on` before queue_order.
+23. A phase cannot transition to `complete` unless its artifact contains a non-empty `completion_evidence` block.
+24. A task cannot transition to `done` unless `tasks/index.yaml` contains non-empty `completion_evidence` for that task.
+25. Every `in_progress -> done` audit.log entry must include `evidence_ref` that resolves to a recorded completion evidence entry.
+26. If completion evidence is missing, state must remain `in_progress` or move to `blocked` with `blocker_reason: missing completion evidence`.
 
 If any check fails, do not advance phase; set blocked status deterministically.
 
@@ -472,5 +585,6 @@ When executing this skill, agents should produce:
 6. All queue and agent assignments in tasks/index.yaml (ensure both assigned_agent and next_agent are present)
 7. AGENTS.md should remain navigation-only and point to specs/ and specs/status.yaml
 8. Deterministic orchestration updates in specs/status.yaml for active_specs and active_tasks (including parallel tasks)
+9. No phase/task completion transition without explicit completion_evidence and matching audit evidence_ref
 
 
