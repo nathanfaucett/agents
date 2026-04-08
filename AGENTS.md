@@ -62,6 +62,19 @@ ln -sf agents/<agent-name>.agent.md ~/.claude/agents/<agent-name>.agent.md
 - Move detailed reference material into `references/` within the skill folder.
 - Put helper scripts in `scripts/` within the skill folder.
 
+4. Apply operational best practices.
+- Keep skills discoverable. In `SKILL.md`, include: Use when, Don't use when, how to run, expected outputs, gotchas, and key edge cases.
+- Include both positive and negative routing examples so invocation is predictable.
+- Iterate on `name`, `description`, and routing examples before changing implementation when routing is inconsistent.
+- Prefer zip uploads for reliability and reproducibility in API workflows.
+- Pin skill versions in production. Use explicit versions for production paths, and only float to `"latest"` in non-production workflows.
+- Pin model and skill version together in production workflows when reproducibility matters.
+- Design skill scripts like tiny CLIs: runnable from command line, deterministic stdout, clear usage/errors, and known output paths.
+- Avoid duplicating full procedures in system prompts; keep global behavior in system prompts and reusable procedures in skills.
+- Treat network-enabled skills as high-risk: use strict allowlists, document allowed data egress, and treat tool output as untrusted.
+- Choose models that reliably execute multi-step workflows for skill-heavy tasks; add explicit verification and output checks in `SKILL.md` when flows are brittle.
+- Respect platform limits for API-hosted skills: exactly one manifest (`SKILL.md` or `skill.md`), max zip size 50 MB, max files per skill version 500, and max uncompressed file size 25 MB.
+
 ## Installation
 Use the following command to install a skill:
 
@@ -75,6 +88,11 @@ A rules update is complete when all are true:
 - Frontmatter constraints are explicit for both agents and skills.
 - Naming restrictions include all forbidden patterns.
 - Skill body limits and folder conventions are explicit.
+- Skill routing guidance includes both "Use when" and "Don't use when" expectations.
+- Production reproducibility guidance covers skill version pinning and model-version pairing.
+- Security guidance covers network allowlists and explicit data-egress boundaries for network-enabled skills.
+- Reliability guidance covers CLI-style execution and explicit verification/output checks.
+- Operational limits for API-hosted skills are explicit.
 - Installation command is present and correct.
 
 ## Guardrails
