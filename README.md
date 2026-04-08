@@ -3,6 +3,12 @@
 This repository contains local agent definitions under `agents/` and local skills
 under `skills/`.
 
+## SDD Navigation
+
+- Specs root: `specs/`
+- Cross-spec orchestration status: `specs/status.yml`
+- AGENTS navigation entrypoint: `AGENTS.md`
+
 ## Local Agents
 
 Current local agents:
@@ -32,6 +38,7 @@ Current local skills:
 
 - `agent-ready`: Analyzes a codebase to identify gaps, inconsistencies, and friction points that hinder autonomous agents or developers from effectively understanding, modifying, and extending the project.
 - `change-review`: Provides a structured code review of a proposed change, including feedback on correctness, style, maintainability, and potential impacts.
+- `openai-reusable-prompts`: Designs and improves prompt best practices and formatting structure for OpenAI use cases. Use when you need clear, consistent prompt templates, stronger instruction writing, and better formatted prompt sections.
 - `poc`: Produces a focused proof-of-concept plan, feasibility assessment, and minimal experiment artifacts for a feature, integration, or architectural approach.
 - `refactor`: Refactor code to improve its structure, readability, and maintainability without changing its external behavior.
 - `review`: Review or analyze something, such as a document, code, or data, to provide feedback, identify issues, or suggest improvements.

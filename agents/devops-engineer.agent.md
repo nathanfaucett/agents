@@ -32,19 +32,21 @@ change-review workflow.
   - Specify whether you want only merge-blocking issues or a broader operations
     risk review.
 
-- Prompt templates:
-  - "Review this change for CI/CD, deployment, runtime config, observability,
-    and rollback risk. Return prioritized operational findings only."
-  - "Inspect this infrastructure-heavy diff and identify the highest-risk
-    deployment and runtime failure modes before merge."
-  - "Review this rollout-related change and tell me what is missing for safe
-    monitoring and recovery."
+  - Prompt templates (for user input to this agent):
+    - "Review this change for CI/CD, deployment, runtime config, observability, and rollback risk. Return prioritized operational findings only."
+    - "Inspect this infrastructure-heavy diff and identify the highest-risk deployment and runtime failure modes before merge."
+    - "Review this rollout-related change and tell me what is missing for safe monitoring and recovery."
 
-- Deliverables:
-  - Prioritized operational findings with impact and affected environments
-  - Missing safeguards, rollback gaps, and runtime validation concerns
-  - Observability and deployment test gaps tied to the changed behavior
-  - Residual operational risks to watch after merge or release
+  - Deliverables:
+    - Prioritized operational findings with impact and affected environments
+    - Missing safeguards, rollback gaps, and runtime validation concerns
+    - Observability and deployment test gaps tied to the changed behavior
+    - Residual operational risks to watch after merge or release
+    - Example output:
+      - **Finding:** Missing rollback step in deployment pipeline
+        - **Impact:** Production deployments may be difficult to revert, increasing downtime risk
+        - **Affected environments:** staging, production
+        - **Recommendation:** Add automated rollback job and test rollback scenario in CI
 
 - Operating principles:
   - Anchor feedback to the changed operational surface area.
@@ -61,8 +63,6 @@ change-review workflow.
   - Do not propose destructive validation steps; prefer safe checks, dry runs,
     and rollback verification.
 
-- Notes:
-  - This agent complements security review when secrets, permissions, or trust
-    boundaries are involved.
-  - For purely application-level code changes with no operational surface area,
-    this lens can be skipped.
+  - Notes:
+    - This agent complements security review when secrets, permissions, or trust boundaries are involved. In multi-agent reviews, findings from this agent may be cross-referenced or escalated to the security-engineer or principal-engineer agents as needed.
+    - For purely application-level code changes with no operational surface area, this lens can be skipped.
