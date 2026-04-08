@@ -54,13 +54,17 @@ Each spec folder must be named as:
 2. Separator is underscore
 3. Suffix is lowercase snake_case feature name
 
+
 Each spec folder must contain:
 
-- phase-status.yaml
+- phase-status.yml
 - specification.md
 - technical-plan.md
 - tasks/
 - implementation.md
+
+### Specs Orchestration Status
+
 
 ### Specs Orchestration Status
 
@@ -86,20 +90,21 @@ Required keys:
 active_specs:
   - specs/01_feature_name
 active_tasks:
-  - spec: specs/01_feature_name
-    task: tasks/02_api-task.md
-    assigned_agent: code-qa-engineer
-    state: in_progress
-    mode: serial
-  - spec: specs/02_another_feature
-    task: tasks/04_validation-task.md
-    assigned_agent: devops-engineer
-    state: in_progress
-    mode: parallel
+   - spec: specs/01_feature_name
+      task: tasks/02_api-task.md
+      assigned_agent: code-qa-engineer
+      state: in_progress
+      mode: serial
+   - spec: specs/02_another_feature
+      task: tasks/04_validation-task.md
+      assigned_agent: devops-engineer
+      state: in_progress
+      mode: parallel
 updated_at: 2026-04-06T00:00:00Z
 ```
 
 ### Task Control and Audit Artifacts
+
 
 Each tasks/ folder must contain:
 
@@ -167,9 +172,10 @@ AGENTS.md is navigation-only for SDD and must include:
 2. Pointer to specs/status.yml
 3. Optional current active spec hint (non-authoritative)
 
-## phase-status.yaml Is Authoritative
 
-phase-status.yaml is the authoritative phase state file.
+## phase-status.yml Is Authoritative
+
+phase-status.yml is the authoritative phase state file.
 
 Rules:
 
@@ -191,7 +197,8 @@ Allowed enums:
 - state: in_progress | blocked | complete
 - next: specify | plan | task | implement | done
 
-Example phase-status.yaml:
+
+Example phase-status.yml:
 
 ```yaml
 phase: specify
@@ -245,6 +252,7 @@ Implement phase:
 - Questions file: implementation.questions.md
 - Completion target: implementation evidence and validation against requirement IDs
 
+
 ## Task Decomposition Rules
 
 Inside tasks/:
@@ -293,10 +301,32 @@ Legal transitions:
 - blocked -> failed (when max_attempts reached)
 - in_progress -> failed (when max_attempts reached)
 
-Illegal transitions must hard-refuse.
+
+Illegal transitions must hard-refuse. A "hard refusal" means the agent must output a clear error message stating the illegal transition, the attempted action, and the required valid states. Example:
+
+```
+ERROR: Illegal task state transition attempted: pending -> done. Only allowed transitions are: pending -> in_progress.
+```
 
 Exactly one in_progress task is allowed per spec folder.
 Cross-spec parallelism is allowed only through specs/status.yml active_tasks.
+
+
+### Example Agent Output for Phase Transition
+
+```
+PHASE TRANSITION: plan -> task
+Updated phase-status.yml: phase: task, state: in_progress, next: implement
+Updated specs/status.yml active_tasks and active_specs
+```
+
+### Example Agent Output for Task Completion
+
+```
+TASK COMPLETE: 02_api-task.md
+Updated tasks/index.yaml: status: done
+Appended tasks-audit-log.yaml entry
+```
 
 ### Multi-Agent Coordination Safety
 
@@ -309,6 +339,8 @@ Rules:
    - lock.owner
    - lock.acquired_at
    - lock.expires_at
+   - lock.fencing_token
+   - Example lease duration: 10 minutes
 3. Only the lock owner may write `specs/status.yml` while the lease is valid.
 4. If lease is expired, another agent may replace it and continue.
 5. Per-spec files (`specs/NN_feature_name/**`) can be updated without the global lock unless they also modify `specs/status.yml`.
@@ -358,9 +390,9 @@ Run these checks before advancing phases:
 
 1. Active spec folder matches specs/NN_name format.
 2. Required fixed artifacts exist.
-3. phase-status.yaml exists and parses as YAML.
+3. phase-status.yml exists and parses as YAML.
 4. phase/state/next values are in allowed enums.
-5. Current phase completion is recorded in phase-status.yaml.
+5. Current phase completion is recorded in phase-status.yml.
 6. Current phase questions file does not exist.
 7. If blocked, blocking reason is recorded in the relevant artifact.
 8. tasks/ files are zero-padded, sequential, and gapless.
@@ -373,7 +405,7 @@ Run these checks before advancing phases:
 14. All assigned_agent and next_agent fields are valid agent names listed in AGENTS.md.
 15. tasks-audit-log.yaml exists and records all transitions.
 16. Blocked or failed task must include blocker_reason.
-17. phase-status.yaml and tasks/index.yaml must agree on phase-level state.
+17. phase-status.yml and tasks/index.yaml must agree on phase-level state.
 18. specs/status.yml exists, parses as YAML, and includes active_specs and active_tasks.
 19. Every active_tasks entry points to an existing spec folder and task file.
 20. specs/status.yml active_tasks entries must agree with per-spec tasks/index.yaml in_progress states.
@@ -430,12 +462,12 @@ Apply these controls to improve safety and recovery in automated execution.
 
 When executing this skill, agents should produce:
 
-1. Deterministic status updates in phase-status.yaml
+1. Deterministic status updates in phase-status.yml
 2. Phase artifact edits only in the active phase unless explicitly unblocked
-3. Hard refusal to advance on gate failure
+3. Hard refusal to advance on gate failure (see above for example)
 4. Traceable outputs linking tasks and implementation back to requirement IDs
 5. All task state transitions and audit entries in tasks-audit-log.yaml
-6. All queue and agent assignments in tasks/index.yaml
+6. All queue and agent assignments in tasks/index.yaml (ensure both assigned_agent and next_agent are present)
 7. AGENTS.md should remain navigation-only and point to specs/ and specs/status.yml
 8. Deterministic orchestration updates in specs/status.yml for active_specs and active_tasks (including parallel tasks)
 
