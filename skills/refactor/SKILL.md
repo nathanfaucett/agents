@@ -1,7 +1,9 @@
 ---
 name: refactor
 description: |
-   Refactor code to improve its structure, readability, and maintainability without changing its external behavior. This involves reorganizing code, improving naming conventions, and optimizing algorithms while ensuring that the functionality remains intact.
+   Improves code structure, readability, and maintainability through
+   behavior-preserving refactoring. Invoke when reorganizing code, improving
+   naming clarity, or reducing complexity without changing external behavior.
 ---
 
 ## Summary
@@ -54,6 +56,13 @@ Use this skill to perform behavior-preserving refactors that improve structure, 
 - Avoid unrelated dependency upgrades or formatting-only large diffs in the same change.
 - When tests are absent, ask the user before making large edits; prefer conservative mechanical changes.
 - Improve or maintain test coverage when extracting or moving logic that requires new tests.
+
+## Gotchas and common risks
+
+- Large refactors can hide subtle behavior changes; keep diffs small and focused.
+- Mixing dependency upgrades with refactors increases review and rollback risk.
+- Broad rename operations can miss transitive call sites; use symbol-aware rename tools when possible.
+- Performance-focused refactors can regress latency or memory; verify before and after on critical paths.
 
 ## Examples
 

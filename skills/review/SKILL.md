@@ -1,32 +1,76 @@
 ---
 name: review
 description: |
-   Review or analyze something, such as a document, code, or data. This skill can be used to provide feedback, identify issues, or suggest improvements. It checks for unnecessary duplications, clarity, accuracy, completeness,and conciseness. It can be applied to various types of content, including written text, code snippets, or data sets.
+   Provides structured analysis and feedback for documents, code, and data by
+   identifying duplication, clarity gaps, accuracy issues, and completeness
+   risks. Invoke when a user requests a quality review, second opinion, or
+   actionable improvement recommendations for static content.
 ---
 
 ## Summary
 
-The `review` skill is designed to evaluate and analyze content, such as documents, code, or data. It provides feedback by identifying issues and suggesting improvements. The skill focuses on checking for unnecessary duplications, clarity, accuracy, completeness, and conciseness. It can be applied to various types of content, making it a versatile tool for enhancing the quality of work.
+Use this skill for static content quality reviews that produce clear findings and practical improvements.
 
-## When to Use
-Use this skill when you need structured feedback on any written content, code, or data. It is especially useful for:
-- Reviewing documents for clarity and conciseness
-- Analyzing code for duplication, completeness, and maintainability
-- Checking data sets for accuracy and unnecessary repetition
+## When to use
+- Reviewing documents for clarity, correctness, and completeness.
+- Reviewing code for duplication, maintainability, and readability risks.
+- Reviewing datasets for obvious consistency or redundancy issues.
+- Providing a second opinion before publishing or merging content.
 
-## How it Works
-The skill analyzes the provided content and generates a review report. The report highlights:
-- Unnecessary duplications
-- Areas lacking clarity or completeness
-- Inaccuracies or inconsistencies
-- Suggestions for improvement
+## When not to use
+- Runtime debugging or execution failures that require running systems or logs.
+- Security audits or compliance checks that need specialized security workflows.
+- Tasks requiring direct implementation rather than analysis.
+- Reviews that depend on unavailable external business context.
 
-## Usage Examples
-- Review a markdown document for clarity and conciseness
-- Analyze a Python script for redundant code and completeness
-- Provide feedback on a requirements document
+## Inputs
+- Content to review (document, code, or data).
+- Requested focus (for example: clarity, duplication, completeness, consistency).
+- Optional context: style guide, acceptance criteria, constraints, or target audience.
+
+## Outputs
+- Structured review report with:
+  1. Key findings (prioritized)
+  2. Duplications
+  3. Clarity/completeness gaps
+  4. Accuracy/consistency issues
+  5. Actionable improvements
+  6. Open questions (if context is missing)
+
+## Procedure
+1. Clarify scope only if review focus is ambiguous.
+2. Inspect content for duplication, ambiguity, inconsistency, and omission.
+3. Apply provided standards or default community conventions.
+4. Produce a concise, prioritized report with actionable fixes.
+5. Separate confirmed findings from context-dependent questions.
+
+## Best practices and constraints
+- Keep findings specific and evidence-based.
+- Distinguish objective issues from style preferences.
+- Prefer actionable recommendations over generic commentary.
+- Do not claim runtime behavior; this skill is static analysis only.
+
+## Gotchas and edge cases
+- Missing context can make valid patterns appear inconsistent; surface as open questions.
+- Very small snippets can hide dependencies; avoid overconfident conclusions.
+- Domain-specific correctness may require expert validation beyond this review.
+
+## Examples
+- "Review this requirements doc for missing acceptance criteria and ambiguity."
+- "Review this module for duplication and maintainability risks."
+- "Review this dataset description for consistency and clarity."
+
+## Acceptance criteria
+- Report is structured, prioritized, and actionable.
+- Findings clearly separate confirmed issues from open questions.
+- Recommendations are tied to observed content, not speculation.
+
+## Notes for agents
+- Ask at most one clarifying question when scope is unclear.
+- Cite exact sections or lines when available.
+- Keep output concise and decision-oriented.
 
 ## Limitations
-- Does not execute or run code; only static analysis
-- May not catch highly domain-specific issues
-- Feedback is based on the provided content and may miss context not included
+- Does not execute code or validate runtime behavior.
+- May miss highly domain-specific issues without additional context.
+- Feedback quality depends on the completeness of provided inputs.

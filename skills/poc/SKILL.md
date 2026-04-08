@@ -1,7 +1,7 @@
 ---
 name: poc
 description: |
-   Produces a focused proof of concept plan, feasibility check, and minimal experiment for a feature, integration, or approach. Use to quickly validate ideas, compare options, or de-risk before committing to full implementation.
+   Produces a focused proof of concept plan, feasibility check, and minimal experiment for a feature, integration, or approach. Invoke when quickly validating ideas, comparing options, or de-risking before committing to full implementation.
 ---
 
 ## Summary
@@ -9,7 +9,7 @@ Quickly turn an idea into a testable proof of concept. Answer: Can this work? Wh
 
 Outputs: code sketch, experiment plan, test harness, architecture notes, and a go/iterate/stop recommendation.
 
-Delegate feasibility analysis and POC design to `researcher-engineer.agent.md`.
+Delegate feasibility analysis and POC design to a research-focused engineering agent.
 
 ## When to use
 - Idea is vague and needs validation.
@@ -42,7 +42,7 @@ Produce a compact POC package:
 6. Next steps: what to do if experiment succeeds, fails, or is inconclusive
 
 ## Operating mode
-- Always delegate core investigation to `researcher-engineer.agent.md`.
+- Always delegate core investigation to a research-focused engineering agent.
 - Frame as research/prototype, not production.
 - Prefer the smallest credible experiment.
 - Keep artifacts minimal and easy to discard.
@@ -52,7 +52,7 @@ Produce a compact POC package:
 1. Clarify the core question/uncertainty.
 2. Define constraints (time, env, dependencies, data, perf).
 3. Pick experiment type: code spike, benchmark, integration mock, comparison, or test harness.
-4. Invoke `researcher-engineer.agent.md` for feasibility, comparison, and minimal POC design.
+4. Invoke a research-focused engineering agent for feasibility, comparison, and minimal POC design.
 5. Review: ensure evidence, not just opinion.
 6. Package: summarize feasibility, steps, criteria, next actions.
 7. Expand scope only if user requests implementation after POC.
@@ -79,7 +79,7 @@ Success =
 - Prefer mocks/sample data over sensitive data.
 - Call out missing validation, hardening, tests, ops.
 
-## Prompt patterns for `researcher-engineer`
+## Prompt patterns for research-focused engineering agents
 - "Design a 1-2 day POC to validate if {approach} meets {constraint}. Include steps, minimal artifacts, and success criteria."
 - "Compare approaches A, B, C for {problem}. Recommend the smallest experiment to choose confidently."
 - "Make a lightweight benchmark plan to test if {system} handles {load target}. Include pass/fail."

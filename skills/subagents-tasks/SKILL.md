@@ -7,12 +7,17 @@ description: |
 ---
 
 ## Summary
-Convert PRD/issue/todo/conversation into an Agents task breakdown markdown files with explicit sub-agent checkpoint workflow. The output file should be structured for iterative execution, with clear next steps and signals for sub-agents to pick up work in sequence.
+Convert PRD/issue/todo/conversation input into a sub-agent task breakdown with explicit checkpoint workflow. The output is a plan folder structured for iterative execution, with clear next steps and machine-friendly signals for downstream sub-agents.
 
 ## When to use
 - You have a PRD, issue list, todo list, or raw discussion and need a structured, execution-ready plan.
 - You want to make work decomposable into cycles.
 - You need clear outputs for engineering, design, or PM handoff.
+
+## When not to use
+- You only need a quick ad hoc checklist with no sub-agent workflow.
+- The input is too incomplete to infer goals, scope, or success criteria.
+- You are trying to execute tasks immediately rather than prepare a plan (use `subagents-tasks-run`).
 
 ## Input options
 - PRD text (goals, users, metrics, scope).
@@ -21,29 +26,25 @@ Convert PRD/issue/todo/conversation into an Agents task breakdown markdown files
 - Conversation notes (meeting, brainstorming, chat log).
 
 ## Output format
-- Output file must be created as a filesystem artifact.
-   - Default output directory: `/tmp/` unless the workspace contains a `.tasks` folder or the user explicitly requests a different output location. If a `.tasks` folder exists, write outputs into `.tasks/`. If the user specifies a path, use that instead.
-   - File path pattern: `${descriptive-name}-${timestamp}.md` (agent should derive a concise descriptive name).
-   - Use the agent filesystem action (e.g., `create_file`) to write the final markdown into the chosen directory using the pattern `directory/${descriptive-name}-${timestamp}.md`.
-   - Ensure the target directory exists (create it if necessary) before writing.
-   - Include the generated file path explicitly in the final summary.
-- Separation: produce one plan folder named `${descriptive-name}` containing a `tasks.md` control file and individual `task{n}.md` files (required).
-   - Output folder: create `${output_dir}/${descriptive-name}/`.
-      - Default output directory: `/tmp/` unless the workspace contains a `.tasks` folder or the user explicitly requests a different output location. If a `.tasks` folder exists, prefer and use `.tasks/` inside the workspace.
-   - Control file: `${descriptive-name}/tasks.md` — contains the master task list, overall idea, and each task's status (`Pending`, `In progress`, `Done`).
-   - Task files: `${descriptive-name}/task1.md`, `${descriptive-name}/task2.md`, ... — each file contains full task context, acceptance criteria, dependencies, estimated effort, and an explicit `Next sub-agent` command.
-   - The control `tasks.md` must reference each task file with workspace-relative paths and include `Sub-agent workflow` sections linking to the task files.
-   - Use the agent filesystem action (`create_file`) to create the folder, `tasks.md`, and each `taskN.md`. Ensure directories exist before writing and include all created file paths in the final summary.
-- The file must be **sub-agent checkpoint friendly**: include an ordered work queue and explicit `Next sub-agent` status markers.
-- Example output skeleton:
-   - `## Context`
-   - `## Goal` + metrics
-   - `## Hypothesis`
-   - `## Experiments / increments`
-   - `## Acceptance criteria`
-   - `## Blockers/risks`
-   - `## Next steps`
-   - `## Sub-agent workflow` (`Pending`, `In progress`, `Done`, `Signals`)
+Use a folder-based structure as the canonical output model.
+
+- Output directory decision:
+   1. Use a user-provided path if specified.
+   2. Otherwise, use `.tasks/` if it exists in the workspace.
+   3. Otherwise, use `/tmp/`.
+- Output folder: `${output_dir}/${descriptive-name}/`
+- Required files:
+   - `${descriptive-name}/tasks.md` control file
+   - `${descriptive-name}/task1.md`, `${descriptive-name}/task2.md`, ...
+- `tasks.md` must include:
+   - Ordered work queue
+   - `Sub-agent workflow` sections: `Pending`, `In progress`, `Done`, `Signals`
+   - Workspace-relative links to each `taskN.md`
+- Each `taskN.md` must include:
+   - Full context and acceptance criteria
+   - Dependencies and estimated effort
+   - Explicit `Next sub-agent` command
+- Use filesystem actions to create directories/files as needed and include all created file paths in the final summary.
 
 ## Step-by-step process
 1. Identify source type

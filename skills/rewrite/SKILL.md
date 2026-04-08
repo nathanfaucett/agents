@@ -28,8 +28,11 @@ direction make incremental refactors impractical.
 ## When not to use
 
 - For small improvements or clarifying renames — prefer the `refactor` skill.
+  - Example: renaming a helper or splitting one large function.
 - When API compatibility must be preserved without migration windows.
+  - Example: patch release commitments that cannot break external clients.
 - When tests or deployment pipelines are absent and risk is unacceptable.
+  - Example: service rewrites without baseline CI or rollback automation.
 
 ## Inputs
 
@@ -85,6 +88,13 @@ direction make incremental refactors impractical.
   timeline, and the expected impact in repo docs and release notes.
 - Keep commits focused and atomic to ease review and reversion.
 
+## Gotchas and edge cases
+
+- Rewrites without stakeholder sign-off often fail at release time.
+- Migration guides that are too abstract cause downstream upgrade failures.
+- Running multiple major rewrites at once increases coordination risk.
+- Untested rollback procedures can turn recoverable incidents into outages.
+
 ## Examples
 
 - "Rewrite the authentication service from Express → Fastify and split
@@ -119,6 +129,6 @@ direction make incremental refactors impractical.
 
 ## References
 
-- Follow repository conventions in [AGENTS.md](AGENTS.md) and the
-  `refactor` skill for behavior-preserving steps.
+- Follow repository conventions in AGENTS.md and use the `refactor` skill
+  for behavior-preserving alternatives.
 

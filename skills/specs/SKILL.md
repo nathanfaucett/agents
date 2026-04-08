@@ -3,15 +3,24 @@ name: specs
 description: |
   Runs a deterministic Spec-Driven Development (SDD) workflow using fixed files,
   hard phase gates, and explicit redirection so humans and agents can execute work
-  with end-to-end traceability. Use when defining, planning, tasking, and
+   with end-to-end traceability. Invoke when defining, planning, tasking, and
   implementing a feature from spec artifacts under specs/.
 ---
 
 # Spec-Driven Development (SDD)
 
-## When To Use
+## When to use
 
 Use this skill when work must follow explicit spec artifacts with strict ordering, hard gates, and machine-readable status.
+
+## When not to use
+
+Do not use this skill when work is ad hoc, low-risk, or too small to justify strict phase gates and orchestration artifacts.
+
+- The task is a small bug fix or routine maintenance with obvious scope.
+- Requirements are too volatile to commit to written phase artifacts yet.
+- The team needs rapid exploratory iteration rather than deterministic gated execution.
+- The repository does not use the required `specs/` artifact structure.
 
 ## Purpose
 

@@ -11,7 +11,7 @@ Use this skill for structured pre-merge review.
 - Subagents report all material findings; only the parent reviewer decides `must-change`.
 - Process: see "Parallel review workflow" below.
 - Use at least 2 reviewers for any non-trivial change: one code-and-QA reviewer plus relevant specialists.
-- Use `Explore` for read-only repo context when the diff touches unfamiliar areas or needs dependency tracing.
+- Use read-only repository exploration (`Explore`) when the diff touches unfamiliar areas or needs dependency tracing.
 - For large or high-churn changes, triage first and review in chunks using file lists, stats, and targeted hunks rather than a full raw diff.
 
 ## When to use
@@ -159,7 +159,7 @@ Use this mode when the review target is large or likely to exceed context limits
    - Start with changed-file inventory and stats.
    - Read only changed files and directly related surrounding code.
    - Check tests, build files, configs, and touched docs when relevant.
-   - Use `Explore` first when the area is unfamiliar.
+  - Use read-only repository exploration (`Explore`) first when the area is unfamiliar.
    - Prefer targeted `grep -r` lookups and symbol-level reads over full-file reads on large changes.
 4. Choose specialist reviewers.
    - Determine required lenses from the diff.

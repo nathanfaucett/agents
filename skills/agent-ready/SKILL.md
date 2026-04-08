@@ -11,6 +11,18 @@ description: |
 
 Analyze a codebase to identify gaps, inconsistencies, and friction points that would hinder autonomous agents (or developers) from effectively understanding, modifying, and extending the project. Provide concrete, prioritized recommendations to improve agent operability.
 
+## When to use
+
+- You need a readiness audit before introducing autonomous agents to a repository.
+- Developer onboarding is slow due to unclear architecture or weak conventions.
+- The team needs prioritized fixes that improve codebase navigability and change safety.
+
+## When not to use
+
+- The request is a narrow bug hunt or compiler-error triage.
+- The goal is implementation of a specific feature rather than readiness assessment.
+- The repository scope is too partial to assess structure and conventions reliably.
+
 ---
 
 ### Inputs
@@ -29,7 +41,7 @@ Analyze a codebase to identify gaps, inconsistencies, and friction points that w
 
 ### Outputs
 
-Structured report with:
+Structured report with explicit, numbered sections and prioritized findings:
 
 1. **Summary**
 

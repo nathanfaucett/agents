@@ -1,6 +1,6 @@
 ---
 name: openai-reusable-prompts
-description: 'Designs and improves prompt best practices and formatting structure for OpenAI use cases. Use when you need clear, consistent prompt templates, stronger instruction writing, and better formatted prompt sections.'
+description: 'Designs and improves prompt best practices and formatting structure for OpenAI use cases. Invoke when reusable prompts require clear instruction hierarchy, consistent formatting, and strong output contracts.'
 argument-hint: 'Describe your use case, required inputs, output format, and constraints.'
 ---
 
@@ -151,11 +151,11 @@ Apply these when the prompt template is packaged in a skill context.
 
 ## Deliverables
 Produce:
-1. Reusable prompt template text (dashboard-ready)
-2. Prompt formatting checklist
-3. Improved example set (good and edge cases)
-4. Prompt rewrite notes explaining key clarity changes
-5. Operational readiness notes (how to run, expected outputs, gotchas, verification checks)
+1. Reusable prompt template text (dashboard-ready; Procedure steps 1-4)
+2. Prompt formatting checklist (Procedure step 6)
+3. Improved example set (good and edge cases; Procedure step 5)
+4. Prompt rewrite notes explaining key clarity changes (Procedure step 7)
+5. Operational readiness notes (how to run, expected outputs, gotchas, verification checks; Procedure step 8)
 
 ## Dashboard authoring template
 Use this as a starting point for the reusable prompt body in the OpenAI Dashboard.
