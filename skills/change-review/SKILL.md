@@ -8,6 +8,7 @@ description: |
 Use this skill for structured pre-merge review.
 
 - Default stance: blocker-first and risk-first.
+- When a likely remediation is clear from the diff or surrounding code, include a concise suggested fix or mitigation.
 - Subagents report all material findings; only the parent reviewer decides `must-change`.
 - Process: see "Parallel review workflow" below.
 - Use at least 2 reviewers for any non-trivial change: one code-and-QA reviewer plus relevant specialists.
@@ -35,7 +36,7 @@ Provide as many of these as possible:
 - Constraints: deadlines, exclusions, sensitive areas, non-goals.
 - Existing evidence: tests run, screenshots, benchmarks, rollout notes.
 
-If the review target is omitted, review the current branch diff against the repository default branch. If the target is ambiguous, resolve the minimum missing context first: what changed, intended behavior, and whether the user wants findings only or also suggested fixes.
+If the review target is omitted, review the current branch diff against the repository default branch. If the target is ambiguous, resolve the minimum missing context first: what changed, intended behavior, and whether the user wants findings only. By default, include suggested fixes when they are clear and high-confidence.
 
 ## Outputs
 Produce one synthesized review package with:
@@ -48,10 +49,10 @@ Produce one synthesized review package with:
      - `Needs changes`: no hard blocker, but at least one required fix remains
      - `Question`: missing context prevents merge confidence
      - `Approve`: no required fixes remain
-2. Blockers — issues that must be resolved before merge
-3. Bugs — defects causing incorrect or undefined behavior
-4. Breaking Changes — backwards-incompatible changes to public contracts, APIs, or user-facing behavior
-5. Suggestions — non-blocking improvements: style, maintainability, performance, test coverage, minor UX polish
+2. Blockers — issues that must be resolved before merge; include a suggested fix or mitigation when known
+3. Bugs — defects causing incorrect or undefined behavior; include a suggested fix when known
+4. Breaking Changes — backwards-incompatible changes to public contracts, APIs, or user-facing behavior; include migration guidance and mitigation when known
+5. Suggestions — non-blocking improvements: style, maintainability, performance, test coverage, minor UX polish; explain the concrete improvement when known
 6. Coverage summary
    - Applied lenses: architecture, correctness, security, UX/accessibility, testing, operability
    - Skipped lenses and why
@@ -66,6 +67,13 @@ Every finding in every section **must** include:
 
 This ensures the final report can be used to generate targeted commits or patches. If a finding cannot be pinpointed to a line, it must be filed as an open question instead.
 
+### Fix guidance
+Every finding should include a concrete remediation, mitigation, or next step when the reviewer has a high-confidence recommendation.
+
+- Prefer specific fixes tied to the changed code, tests, config, or rollout steps.
+- If the safest fix is unclear from the diff, say `No confident fix proposed` instead of guessing.
+- Breaking changes should include a migration path, compatibility option, or mitigation when one is known.
+
 ## Blocker-first policy
 - Prioritize actionable blockers and required fixes over low-risk commentary.
 - Treat the following as potential blockers when evidenced in code: correctness bugs, data loss or integrity risk, security boundary violations, broken deploy/runtime behavior, and critical test gaps on changed behavior.
@@ -79,6 +87,8 @@ Use the provided templates.
   - Include agent name, review lens, and clear AI attribution.
   - Findings must be categorized into: Blockers, Bugs, Breaking Changes, Suggestions.
   - Every finding must include a file path relative to the project root and a line number or range.
+  - Include `suggested_fix` for Blockers, Bugs, and Suggestions when known; use `No confident fix proposed` rather than inventing one.
+  - Breaking Changes should include `migration_path`, plus a mitigation or compatibility fix when known.
   - Subagents must not classify merge gating; the parent reviewer decides what is a Blocker.
 - `templates/reviewer-output.md` for the final synthesized review.
   - Always include:
@@ -88,6 +98,7 @@ Use the provided templates.
     - Footer: `Review conducted entirely by AI`
   - Sections must appear in order: Blockers → Bugs → Breaking Changes → Suggestions.
   - The report must be machine-parseable for commit generation: every entry must have `file` and `lines` fields in consistent format (`L<n>` or `L<n>-L<m>`).
+  - Preserve or synthesize `suggested_fix` details when supported by the evidence; do not strip them during parent synthesis unless they are speculative or superseded.
 
 ## VS Code operating constraints
 These rules apply in VS Code Copilot agent mode:
@@ -105,6 +116,7 @@ These rules apply in VS Code Copilot agent mode:
 - Give each subagent a clear lens, relevant file set, explicit instructions to return findings, and inline diff context.
 - Keep specialists independent; do not ask one reviewer to incorporate another reviewer's opinion.
 - Deduplicate overlapping findings in the parent review and keep the strongest version.
+- Preserve high-confidence remediation ideas from subagents and carry them into the final synthesis when they remain valid.
 - If a lens is irrelevant, skip it and state that in coverage.
 - Final output must be evidence-oriented, concise, and ordered by user impact and regression risk, with must-change findings before non-blocking observations.
 
@@ -149,7 +161,7 @@ Use this mode when the review target is large or likely to exceed context limits
      ```
    - On large changes, run full `git diff` only for selected high-risk chunks.
    - If the default branch cannot be determined, ask the user instead of guessing.
-   - Confirm whether the user wants findings only or also suggested fixes.
+  - Confirm whether the user wants findings only or also suggested fixes. If unspecified, include suggested fixes when they are clear and high-confidence.
 2. Discover available agents.
    - Scan `agents/*.agent.md`.
    - Read each file's frontmatter `name` and `description`.
@@ -223,6 +235,7 @@ The skill succeeds when it:
 - Produces a consolidated, deduplicated, prioritized final review.
 - Separates findings into the four required categories: Blockers, Bugs, Breaking Changes, Suggestions.
 - Every finding includes a file path relative to the project root and a specific line number or range.
+- Offers concrete fixes or mitigations for findings when confidently supported by the diff or surrounding code.
 - Makes blockers immediately obvious at the top of the report.
 - Clearly separates confirmed findings from open questions.
 - Explains impact in terms of behavior, risk, or user effect.
@@ -237,6 +250,7 @@ The skill succeeds when it:
 - Do not request or expose secrets or credentials.
 - Do not block on hypothetical hardening concerns unrelated to the actual change.
 - If confidence is low because context is missing, convert the point into an open question.
+- Do not invent fixes that are not supported by the diff, surrounding code, or established behavior.
 - Do not omit file paths or line numbers from any finding; if a line cannot be determined, file an open question instead.
 - Do not use absolute file paths; all paths must be relative to the project root.
 - Do not paste massive raw diffs into one prompt; use chunked, targeted hunks.
@@ -277,6 +291,7 @@ Before selecting reviewers, build a roster from `agents/*.agent.md`:
 - [ ] Duplicate findings merged
 - [ ] Findings categorized into: Blockers, Bugs, Breaking Changes, Suggestions (in that order)
 - [ ] Every finding has a file path relative to project root and a line number or range
+- [ ] Findings include a suggested fix or explicit `No confident fix proposed` where appropriate
 - [ ] Open questions used for any finding that cannot be pinpointed to a line
 - [ ] Final review uses `templates/reviewer-output.md`
 - [ ] Final review includes AI reviewer identification and reviewer list
@@ -286,21 +301,22 @@ Before selecting reviewers, build a roster from `agents/*.agent.md`:
 All subagents must:
 - Categorize findings as: **Blockers**, **Bugs**, **Breaking Changes**, **Suggestions**.
 - Include `file` (relative to project root) and `lines` (`L<n>` or `L<n>-L<m>`) for every finding.
+- Include a concrete `suggested_fix` or mitigation when clear from the diff; otherwise say `No confident fix proposed`.
 - File an open question for any finding that cannot be pinpointed to a specific line.
 - Do not classify merge gating; the parent reviewer decides what is a Blocker.
 
 - Code and QA reviewer
-  - "Review this change for correctness, maintainability, edge cases, performance, test quality, and release confidence. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Return open questions and test gaps. Do not classify merge gating."
+  - "Review this change for correctness, maintainability, edge cases, performance, test quality, and release confidence. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Return open questions and test gaps. Offer a concrete fix or mitigation when clear from the diff; otherwise say no confident fix proposed. Do not classify merge gating."
 - Architecture-focused reviewer
-  - "Review this change for architectural fit, scalability, reliability, and system design risk. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Return open questions and operability concerns. Do not classify merge gating."
+  - "Review this change for architectural fit, scalability, reliability, and system design risk. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Return open questions and operability concerns. Offer a concrete fix or mitigation when clear from the diff; otherwise say no confident fix proposed. Do not classify merge gating."
 - Security reviewer
-  - "Review this change for security issues, trust boundary mistakes, unsafe data handling, auth/authz problems, dependency risk, and missing abuse-case coverage. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Include likely exploit/impact context. Do not classify merge gating."
+  - "Review this change for security issues, trust boundary mistakes, unsafe data handling, auth/authz problems, dependency risk, and missing abuse-case coverage. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Include likely exploit/impact context. Offer a concrete fix or mitigation when clear from the diff; otherwise say no confident fix proposed. Do not classify merge gating."
 - UX/UI reviewer
-  - "Review this user-facing change for UX regressions, accessibility issues, interaction inconsistencies, responsive concerns, and unclear copy. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Return testing gaps. Do not classify merge gating."
+  - "Review this user-facing change for UX regressions, accessibility issues, interaction inconsistencies, responsive concerns, and unclear copy. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Return testing gaps. Offer a concrete fix or mitigation when clear from the diff; otherwise say no confident fix proposed. Do not classify merge gating."
 - Additional QA specialist (optional)
-  - "Review this change for test adequacy, regression coverage, release confidence, and missing validation for changed behavior. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Do not classify merge gating."
+  - "Review this change for test adequacy, regression coverage, release confidence, and missing validation for changed behavior. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Offer a concrete fix or mitigation when clear from the diff; otherwise say no confident fix proposed. Do not classify merge gating."
 - DevOps or deployment reviewer
-  - "Review this change for CI/CD risk, deployment safety, infrastructure correctness, runtime configuration issues, observability gaps, and rollback hazards. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Include mitigation ideas. Do not classify merge gating."
+  - "Review this change for CI/CD risk, deployment safety, infrastructure correctness, runtime configuration issues, observability gaps, and rollback hazards. Categorize findings as Blockers, Bugs, Breaking Changes, or Suggestions. Include the file path (relative to project root) and line number(s) for every finding. Include mitigation ideas. Offer a concrete fix or mitigation when clear from the diff; otherwise say no confident fix proposed. Do not classify merge gating."
 - `Explore`
   - "Read the relevant modules around this diff and summarize the architectural context, call paths, and likely regression surfaces so the specialist reviewers can stay focused."
 

@@ -9,76 +9,6 @@ description: |
 
 # Spec-Driven Development (SDD)
 
----
-## Static Content Review (per review skill)
-
-### When to use
-- Reviewing this skill file or SDD artifacts for clarity, correctness, and completeness.
-- Reviewing SDD code or orchestration for duplication, maintainability, and readability risks.
-- Providing a second opinion before publishing or merging SDD process changes.
-
-### When not to use
-- Runtime debugging or execution failures that require running systems or logs.
-- Security audits or compliance checks that need specialized security workflows.
-- Tasks requiring direct implementation rather than analysis.
-- Reviews that depend on unavailable external business context.
-
-### Inputs
-- Content to review (document, code, or data).
-- Requested focus (for example: clarity, duplication, completeness, consistency).
-- Optional context: style guide, acceptance criteria, constraints, or target audience.
-
-### Outputs
-- Structured review report with:
-   1. Key findings (prioritized)
-   2. Duplications
-   3. Clarity/completeness gaps
-   4. Accuracy/consistency issues
-   5. Actionable improvements
-   6. Open questions (if context is missing)
-
-### Procedure
-1. Clarify scope only if review focus is ambiguous.
-2. Inspect content for duplication, ambiguity, inconsistency, and omission.
-3. Apply provided standards or default community conventions.
-4. Produce a concise, prioritized report with actionable fixes.
-5. Separate confirmed findings from context-dependent questions.
-
-### Best practices and constraints
-- Keep findings specific and evidence-based.
-- Distinguish objective issues from style preferences.
-- Prefer actionable recommendations over generic commentary.
-- Do not claim runtime behavior; this skill is static analysis only.
-
-### Gotchas and edge cases
-- Missing context can make valid patterns appear inconsistent; surface as open questions.
-- Very small snippets can hide dependencies; avoid overconfident conclusions.
-- Domain-specific correctness may require expert validation beyond this review.
-
-### Examples
-- "Review this requirements doc for missing acceptance criteria and ambiguity."
-- "Review this module for duplication and maintainability risks."
-- "Review this dataset description for consistency and clarity."
-
-### Acceptance criteria
-- Report is structured, prioritized, and actionable.
-- Findings clearly separate confirmed issues from open questions.
-- Recommendations are tied to observed content, not speculation.
-
-### Notes for agents
-- Ask at most one clarifying question when scope is unclear.
-- Cite exact sections or lines when available.
-- Keep output concise and decision-oriented.
-
-### Limitations
-- Does not execute code or validate runtime behavior.
-- May miss highly domain-specific issues without additional context.
-- Feedback quality depends on the completeness of provided inputs.
-
----
-
-# Spec-Driven Development (SDD)
-
 ## When to use
 
 Use this skill when work must follow explicit spec artifacts with strict ordering, hard gates, and machine-readable status.
@@ -136,9 +66,6 @@ Each spec folder must contain:
 
 ### Specs Orchestration Status
 
-
-### Specs Orchestration Status
-
 specs/status.yaml is the cross-spec orchestration index.
 
 Rules:
@@ -161,16 +88,16 @@ Required keys:
 active_specs:
   - specs/01_feature_name
 active_tasks:
-   - spec: specs/01_feature_name
-      task: tasks/02_api-task.md
-      assigned_agent: code-qa-engineer
-      state: in_progress
-      mode: serial
-   - spec: specs/02_another_feature
-      task: tasks/04_validation-task.md
-      assigned_agent: devops-engineer
-      state: in_progress
-      mode: parallel
+  - spec: specs/01_feature_name
+    task: tasks/02_api-task.md
+    assigned_agent: code-qa-engineer
+    state: in_progress
+    mode: serial
+  - spec: specs/02_another_feature
+    task: tasks/04_validation-task.md
+    assigned_agent: devops-engineer
+    state: in_progress
+    mode: parallel
 updated_at: 2026-04-06T00:00:00Z
 ```
 
@@ -191,28 +118,28 @@ index.yaml schema:
 current_task: 02_api-task.md
 next_task: 03_validate-task.md
 queue_order:
-   - 01_setup-task.md
-   - 02_api-task.md
-   - 03_validate-task.md
+  - 01_setup-task.md
+  - 02_api-task.md
+  - 03_validate-task.md
 tasks:
-   01_setup-task.md:
-      status: done
-      assigned_agent: agent-name
-      attempts: 1
-      blocker_reason: null
-      updated_at: 2026-04-06T00:00:00Z
-   02_api-task.md:
-      status: in_progress
-      assigned_agent: agent-name
-      attempts: 2
-      blocker_reason: null
-      updated_at: 2026-04-06T00:00:00Z
-   03_validate-task.md:
-      status: pending
-      assigned_agent: agent-name
-      attempts: 0
-      blocker_reason: null
-      updated_at: 2026-04-06T00:00:00Z
+  01_setup-task.md:
+    status: done
+    assigned_agent: agent-name
+    attempts: 1
+    blocker_reason: null
+    updated_at: 2026-04-06T00:00:00Z
+  02_api-task.md:
+    status: in_progress
+    assigned_agent: agent-name
+    attempts: 2
+    blocker_reason: null
+    updated_at: 2026-04-06T00:00:00Z
+  03_validate-task.md:
+    status: pending
+    assigned_agent: agent-name
+    attempts: 0
+    blocker_reason: null
+    updated_at: 2026-04-06T00:00:00Z
 ```
 
 
@@ -220,12 +147,12 @@ tasks:
 
 ```yaml
 - timestamp: 2026-04-06T00:00:00Z
-   actor: agent-name
-   task: 02_api-task.md
-   from_state: pending
-   to_state: in_progress
-   artifact_changed: index.yaml
-   note: "Started API task"
+  actor: agent-name
+  task: 02_api-task.md
+  from_state: pending
+  to_state: in_progress
+  artifact_changed: index.yaml
+  note: "Started API task"
 ```
 
 Per-phase questions files are optional and only created when unresolved questions exist:
@@ -246,7 +173,7 @@ AGENTS.md is navigation-only for SDD and must include:
 3. Optional current active spec hint (non-authoritative)
 
 
-## status.yaml Is Authoritative
+## Per-Spec status.yaml Is Authoritative
 
 status.yaml is the authoritative phase state file.
 
@@ -282,11 +209,11 @@ updated_at: 2026-04-06T00:00:00Z
 
 ## Hard Gate Rules
 
-Progression from phase P to P+1 is allowed only when both are true:
+Progression from phase P to P+1 is allowed only when all of these are true:
 
 1. The current phase artifact exists and is marked complete in status.yaml.
 2. The current phase questions file does not exist.
-3. Completion evidence for phase P exists in the phase artifact and in audit/log metadata.
+3. Completion evidence for phase P exists in the phase artifact and in `audit.log` metadata.
 
 Questions behavior:
 
@@ -295,7 +222,7 @@ Questions behavior:
 3. Delete the phase questions file after resolution.
 4. Update status.yaml to complete for phase P, then advance.
 
-If either gate condition fails, do not advance. Set:
+If any gate condition fails, do not advance. Set:
 
 - state: blocked
 - next: current phase
@@ -317,13 +244,13 @@ Task completion evidence:
 
 ```yaml
 tasks:
-   02_api-task.md:
-      status: done
-      completion_evidence:
-         - type: test|artifact|diff|check
-           ref: path-or-command
-           summary: short human-readable proof
-      updated_at: 2026-04-06T00:00:00Z
+  02_api-task.md:
+    status: done
+    completion_evidence:
+      - type: test|artifact|diff|check
+        ref: path-or-command
+        summary: short human-readable proof
+    updated_at: 2026-04-06T00:00:00Z
 ```
 
 3. `completion_evidence` must contain at least one non-empty entry.
@@ -391,7 +318,7 @@ depends_on: [] # list of task_ids
 assigned_agent: agent-name
 next_agent: agent-name
 acceptance_checks:
-   - "API returns 200 for valid input"
+  - "API returns 200 for valid input"
 max_attempts: 3
 timeout_minutes: 30
 ```
@@ -411,7 +338,6 @@ Legal transitions:
 - blocked -> failed (when max_attempts reached)
 - in_progress -> failed (when max_attempts reached)
 
-
 Illegal transitions must hard-refuse. A "hard refusal" means the agent must output a clear error message stating the illegal transition, the attempted action, and the required valid states. Example:
 
 ```
@@ -420,23 +346,6 @@ ERROR: Illegal task state transition attempted: pending -> done. Only allowed tr
 
 Exactly one in_progress task is allowed per spec folder.
 Cross-spec parallelism is allowed only through specs/status.yaml active_tasks.
-
-
-### Example Agent Output for Phase Transition
-
-```
-PHASE TRANSITION: plan -> task
-Updated status.yaml: phase: task, state: in_progress, next: implement
-Updated specs/status.yaml active_tasks and active_specs
-```
-
-### Example Agent Output for Task Completion
-
-```
-TASK COMPLETE: 02_api-task.md
-Updated tasks/index.yaml: status: done
-Appended audit.log entry
-```
 
 ### Multi-Agent Coordination Safety
 
@@ -509,7 +418,6 @@ Run these checks before advancing phases:
 8. tasks/ files are zero-padded, sequential, and gapless.
 9. Every task file contains trace_to with at least one requirement/story ID.
 10. Every trace_to ID resolves to an ID in specification.md.
-
 11. tasks/index.yaml exists, parses as YAML, and matches task files.
 12. For each spec folder, only one in_progress task at a time.
 13. All task status values are legal (pending, in_progress, done, blocked, failed).

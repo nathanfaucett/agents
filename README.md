@@ -5,8 +5,10 @@ under `skills/`.
 
 ## Local Agents
 
+
 Current local agents:
 
+- `architecture`
 - `code-qa-engineer`
 - `code-reviewer`
 - `devops-engineer`
