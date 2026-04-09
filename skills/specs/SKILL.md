@@ -39,6 +39,32 @@ SDD has four ordered phases:
 4. Do not use explicit redirect pointers; flow is derived from phase state, dependencies, and queue order.
 5. Never transition a phase or task to complete/done without recorded completion evidence in a required artifact.
 
+## Invocation Contract
+
+Command-style specs invocations are execution commands, not explanation prompts.
+
+Examples include: /specs continue, /specs run, /specs advance, and equivalent natural-language requests to proceed.
+
+When invoked, the agent must attempt the deterministic run loop immediately and update artifacts when gates pass.
+
+Required behavior for command-style specs invocations:
+
+1. Perform repository reads and validation checks directly; do not ask the user to pick a spec/task when specs/status.yaml already defines active work.
+2. Execute the next legal transition(s) and write updates in deterministic order.
+3. Continue forward automatically until reaching a hard stop condition.
+4. Return an action report of what changed, what is now active, and why execution stopped (if it stopped).
+
+Only ask the user for input when one of these hard-stop conditions is true:
+
+1. Required orchestration artifacts are missing or invalid and cannot be repaired deterministically.
+2. A phase/task is blocked by an unresolved questions file.
+3. A blocker requires a product or architecture decision that is not inferable from artifacts.
+
+Forbidden response pattern for command-style specs invocations:
+
+1. Purely instructional or explanatory text that does not attempt any state transition.
+2. Deferring with "tell me which spec/task" when active spec/task is already discoverable from existing status files.
+
 ## Required Repository Layout
 
 Required at repository root:
@@ -494,5 +520,6 @@ When executing this skill, agents should produce:
 7. AGENTS.md should remain navigation-only and point to specs/ and specs/status.yaml
 8. Deterministic orchestration updates in specs/status.yaml for active_specs and active_tasks (including parallel tasks)
 9. No phase/task completion transition without explicit completion_evidence and matching audit evidence_ref
+10. For command-style specs invocations, execution-first response: include attempted transitions, files changed, resulting active state, and explicit blocker reason when blocked
 
 
