@@ -1,10 +1,16 @@
 # Agents
 
-This repository contains local agent definitions under `agents/` and local skills
-under `skills/`.
+This repository contains local agent definitions under `agents/`, local skills
+under `skills/`, and instructions under `instructions/`.
+
+## Instructions
+
+```bash
+# VSCode Copilot instructions:
+ln -sf instructions/copilot-instructions.md ~/.copilot/copilot-instructions.md
+```
 
 ## Local Agents
-
 
 Current local agents:
 
