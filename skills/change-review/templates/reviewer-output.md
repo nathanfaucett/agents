@@ -12,9 +12,7 @@ description: Master template for the final synthesized code review from the pare
 ---
 
 ## Verdict
-**Status**: {{verdict}} (One of: Approve, Needs Changes, Questions, Block)
-
-**Merge Readiness**: {{merge_readiness}} (Ready | Not Ready)
+**Status**: {{verdict}} (One of: Approve, Needs changes, Question, Block)
 
 {{verdict_rationale}}
 
@@ -29,7 +27,7 @@ description: Master template for the final synthesized code review from the pare
 - **File**: `{{file_path}}`
 - **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
 - **Why blocking**: {{reason}}
-- **Fix**: {{suggested_fix}}
+- **Suggested fix**: {{#if suggested_fix}}{{suggested_fix}}{{else}}No confident fix proposed.{{/if}}
 - **Identified by**: {{agent_name}}
 {{/each}}
 {{else}}
@@ -48,7 +46,7 @@ None.
 - **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
 - **Impact**: {{impact_description}}
 - **Why it matters**: {{explanation}}
-- **Fix**: {{suggested_fix}}
+- **Suggested fix**: {{#if suggested_fix}}{{suggested_fix}}{{else}}No confident fix proposed.{{/if}}
 - **Identified by**: {{agent_name}}
 {{/each}}
 {{else}}
@@ -68,6 +66,9 @@ None.
 - **What breaks**: {{what_breaks}}
 - **Affected callers / consumers**: {{affected_consumers}}
 - **Migration path**: {{migration_path}}
+{{#if suggested_fix}}
+- **Suggested fix**: {{suggested_fix}}
+{{/if}}
 - **Identified by**: {{agent_name}}
 {{/each}}
 {{else}}
@@ -81,10 +82,29 @@ None.
 
 {{#if suggestions}}
 {{#each suggestions}}
-- **{{issue_title}}** — `{{file_path}}` `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`  
-  {{explanation}}  
-  _Suggestion_: {{suggested_fix}}  
-  _From_: {{agent_name}}
+### {{issue_title}}
+- **File**: `{{file_path}}`
+- **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
+- **Why it matters**: {{explanation}}
+- **Suggested fix**: {{#if suggested_fix}}{{suggested_fix}}{{else}}No confident fix proposed.{{/if}}
+- **Identified by**: {{agent_name}}
+{{/each}}
+{{else}}
+None.
+{{/if}}
+
+---
+
+## Nitpicks
+> Trivial cosmetic items with zero correctness, accessibility, or maintenance consequence.
+
+{{#if nitpicks}}
+{{#each nitpicks}}
+### {{issue_title}}
+- **File**: `{{file_path}}`
+- **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
+- **Note**: {{explanation}}
+- **Identified by**: {{agent_name}}
 {{/each}}
 {{else}}
 None.
@@ -93,6 +113,8 @@ None.
 ---
 
 ## Coverage Summary
+> Include any skipped lenses or unreviewed areas here when coverage is partial.
+
 **Review Lenses Applied**:
 {{#each applied_lenses}}
 - ✓ {{lens_name}}: {{agent_name}}
@@ -138,6 +160,8 @@ None identified beyond findings above.
 ---
 
 ## Test Evidence
+> Optional: include when test or verification evidence is available.
+
 **Tests Run**: {{test_status}}  
 **Coverage**: {{coverage_level}}  
 {{test_notes}}
