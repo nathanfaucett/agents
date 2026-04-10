@@ -65,7 +65,8 @@ for skill in \
   mattpocock/skills/improve-codebase-architecture \
   mattpocock/skills/prd-to-issues \
   mattpocock/skills/tdd \
-  mattpocock/skills/write-a-prd
+  mattpocock/skills/write-a-prd \
+  JuliusBrussee/caveman
 do
   npx skills add "$skill" --global --symlink -y
 done
@@ -76,6 +77,7 @@ done
 - [prd-to-issues](https://github.com/mattpocock/skills): Break a PRD into independent implementation issues.
 - [tdd](https://github.com/mattpocock/skills): Apply red-green-refactor workflows.
 - [write-a-prd](https://github.com/mattpocock/skills): Build a PRD from interviews and codebase exploration.
+- [caveman](https://github.com/JuliusBrussee/caveman): Enable compressed, token-efficient assistant responses.
 
 ## MCP
 
