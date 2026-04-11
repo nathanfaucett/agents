@@ -40,14 +40,13 @@ Current local skills:
 
 - `agent-ready`: Analyzes a codebase to identify gaps, inconsistencies, and friction points that hinder autonomous agents or developers from effectively understanding, modifying, and extending the project.
 - `change-review`: Provides a structured code review of a proposed change, including feedback on correctness, style, maintainability, and potential impacts.
+- `github-actions`: Provides best practices and guidance for GitHub Actions workflow design, review, and troubleshooting. Use when you need correct, secure, and maintainable CI/CD workflow recommendations.
 - `openai-reusable-prompts`: Designs and improves prompt best practices and formatting structure for OpenAI use cases. Use when you need clear, consistent prompt templates, stronger instruction writing, and better formatted prompt sections.
 - `poc`: Produces a focused proof-of-concept plan, feasibility assessment, and minimal experiment artifacts for a feature, integration, or architectural approach.
 - `refactor`: Refactor code to improve its structure, readability, and maintainability without changing its external behavior.
 - `review`: Review or analyze something, such as a document, code, or data, to provide feedback, identify issues, or suggest improvements.
 - `rewrite`: Performs a structured, opinionated, and safety-conscious full rewrite that intentionally introduces breaking changes.
 - `specs`: Runs a deterministic Spec-Driven Development (SDD) workflow using fixed files, hard phase gates, and explicit redirection.
-- `subagents-tasks`: Converts input into an iterative plan file containing Pending/In progress/Done sections and next-subagent signals for subagents to consume and update.
-- `subagents-tasks-run`: Executes the next pending task from a control Agents tasks markdown and updates both the control and per-task files with progress and signals for subsequent sub-agents.
 
 Install all local skills:
 
