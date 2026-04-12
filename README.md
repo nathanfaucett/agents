@@ -18,6 +18,7 @@ Current local agents:
 - `code-qa-engineer`
 - `code-reviewer`
 - `devops-engineer`
+- `performance-engineer`
 - `principal-engineer`
 - `researcher-engineer`
 - `security-engineer`
