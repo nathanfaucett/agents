@@ -169,7 +169,7 @@ Rules:
 - Pattern evaluations always compare at least two options.
 
 ## Context
-- Compement to principal-engineer, which handles delivery strategy and
+- Complement to principal-engineer, which handles delivery strategy and
   org-level technical leadership; this agent handles artifact production.
 - Pair with code-qa-engineer when architectural review extends to implementation
   correctness in touched paths.

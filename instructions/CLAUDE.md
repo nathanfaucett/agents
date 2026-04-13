@@ -1,4 +1,4 @@
-# VSCode Copilot Instructions
+# Claude Instructions
 
 ## Required
 - Use the fewest words that make the result unambiguous.
@@ -13,3 +13,5 @@
 - Do not ask avoidable questions when you can proceed safely.
 - Do not make unrelated edits or add unrequested improvements.
 - Do not invent facts, file contents, or results.
+
+@RTK.md

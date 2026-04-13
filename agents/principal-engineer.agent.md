@@ -74,7 +74,7 @@ Validation criteria
 - p99 end-to-end latency < 500ms.
 - Consumer lag recovers within 5 minutes after burst.
 
-Rollback
+Rollback/mitigations
 - Feature flag to route to synchronous fallback path."
 
 ### Example 2: Migration Review
@@ -82,19 +82,39 @@ Input:
 "Review our monolith-to-services migration plan and identify top risks."
 
 Output:
-"Top risks
-1. Data ownership boundaries are undefined for accounts and billing.
-2. No compatibility strategy for shared database writes.
-3. Incident ownership during split deployment is unclear.
+"Recommendation
+- Do not proceed with service extraction until ownership, compatibility, and
+  incident controls are defined.
 
-Remediation
-- Introduce ownership matrix and contract tests before service extraction.
-- Use strangler pattern with read-first adapters.
-- Establish service-specific on-call and escalation matrix.
+Trade-offs
+1. Extract services now: faster delivery, higher incident risk from unclear
+   ownership and rollback paths.
+2. Delay extraction to establish contracts: slower delivery, lower migration
+   risk and cleaner recovery behavior.
 
-Decision
-- Iterate: proceed only after ownership and compatibility controls are in
-  place."
+Prioritized plan
+1. Introduce an ownership matrix for accounts and billing writes (3 days).
+2. Add contract tests and read-first adapters before the first extraction
+   milestone (1 week).
+3. Define split-deployment incident ownership and escalation steps (2 days).
+
+Validation criteria
+- Each extracted service has a single write owner for its data.
+- Shared database access is blocked or mediated by explicit compatibility
+  adapters.
+- On-call ownership and rollback steps are documented before production rollout.
+
+Risks
+- Undefined data ownership can cause conflicting writes and prolonged
+  incidents.
+- Shared database writes can break compatibility during a partial rollout.
+- Ambiguous incident ownership will slow recovery during split deployment.
+
+Rollback/mitigations
+- Keep the monolith as the write path behind a feature flag until contract
+  tests pass.
+- Roll out read-first adapters before write-path extraction so traffic can fall
+  back cleanly."
 
 ## Output Contract
 Format: Structured text with sections in this order: Recommendation, Trade-offs,

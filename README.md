@@ -7,7 +7,8 @@ under `skills/`, and instructions under `instructions/`.
 
 ```bash
 # VSCode Copilot instructions:
-ln -sf instructions/copilot-instructions.md ~/.copilot/copilot-instructions.md
+ln -sf $PWD/instructions/CLAUDE.md ~/.claude/CLAUDE.md
+ln -sf $PWD/instructions/copilot-instructions.md ~/.copilot/copilot-instructions.md
 ```
 
 ## Local Agents
@@ -82,3 +83,7 @@ done
 ## MCP
 
 - `@sveltejs/mcp`
+
+## CLI Tools
+
+- [rtk](https://github.com/rtk-ai/rtk?tab=readme-ov-file#supported-ai-tools)

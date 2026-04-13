@@ -80,14 +80,50 @@ Input:
 "Triage these SCA findings and propose remediation priorities for this sprint."
 
 Output:
-"Priority plan
-1. Critical: Upgrade xml-parser package to patched version due to RCE risk.
-2. High: Pin transitive dependency chain in lockfile and add CI policy gate.
-3. Medium: Defer low-exploitability DoS issue with monitoring control.
+"Critical
+1. file: package-lock.json:12
+Issue: xml-parser remains pinned to a version with a known RCE vulnerability.
+Attack path: Crafted XML can reach the vulnerable parser through the ingestion
+path and trigger remote code execution.
+Impact: Application hosts can be compromised through a normal request path.
+Remediation: Upgrade xml-parser to the patched version and remove vulnerable
+transitive resolutions.
+Verification: Re-run SCA and add a CI check that confirms the resolved version
+is patched.
+
+High
+2. file: package.json:48
+Issue: The dependency chain is not pinned tightly enough to prevent
+reintroduction of the vulnerable transitive package.
+Attack path: A fresh install can resolve back to an unsafe version through
+semver drift.
+Impact: The RCE issue can silently reappear in future builds.
+Remediation: Pin or override the transitive dependency in the supported package
+manager configuration.
+Verification: Run a clean install in CI and assert the resolved dependency tree
+contains only patched versions.
+
+Medium
+3. file: .github/workflows/ci.yml:77
+Issue: CI lacks a policy gate that fails builds on known high-severity
+dependency findings.
+Attack path: Vulnerable packages can pass normal review and ship before manual
+triage catches them.
+Impact: Future critical dependency issues rely on manual vigilance.
+Remediation: Add an SCA or lockfile policy check that blocks high-severity
+findings.
+Verification: Introduce a known-bad fixture or policy test and confirm the
+pipeline fails.
+
+Verification checks
+- Confirm production artifacts resolve the patched xml-parser version.
+- Re-run SCA after the lockfile update and verify the RCE finding is closed.
+- Ensure CI fails on reintroduction of the vulnerable dependency chain.
 
 Executive summary
-- Overall risk: High until critical RCE package is remediated.
-- Sprint recommendation: Block release if critical remains unresolved."
+- Overall risk: High until the RCE package is remediated and a CI gate prevents
+  regression.
+- Sprint recommendation: Treat the Critical item as release-blocking."
 
 ## Output Contract
 Format: Structured text with sections in this order: Critical, High, Medium,
