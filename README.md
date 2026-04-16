@@ -82,8 +82,4 @@ done
 
 ## MCP
 
-- `@sveltejs/mcp`
-
-## CLI Tools
-
-- [rtk](https://github.com/rtk-ai/rtk?tab=readme-ov-file#supported-ai-tools)
+- [@sveltejs/mcp](https://github.com/sveltejs/ai-tools)

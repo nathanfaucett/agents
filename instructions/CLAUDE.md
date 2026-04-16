@@ -13,5 +13,3 @@
 - Do not ask avoidable questions when you can proceed safely.
 - Do not make unrelated edits or add unrequested improvements.
 - Do not invent facts, file contents, or results.
-
-@RTK.md
