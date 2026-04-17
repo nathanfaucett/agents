@@ -1,107 +1,118 @@
 ---
 name: subagent-output-template
-description: Template for formatting subagent review findings from specialist reviewers
+description: Template for specialist reviewer subagents — output a JSON partial consumed by the parent reviewer
 ---
 
-## Review by {{agent_name}} (AI Reviewer)
-**Focus**: {{review_lens}}  
-**Reviewer Type**: AI-generated specialist review  
-**Reviewed By**: {{agent_name}}
+<!--
+SPECIALIST REVIEWER INSTRUCTIONS
 
-> All file paths are relative to the project root. Line numbers must be included for every finding.
-> Include a concrete fix or mitigation when known; otherwise say `No confident fix proposed`.
-> Potential blockers are advisory only. The parent reviewer decides merge gating.
-> Use Nitpicks only for trivial cosmetic items with zero correctness, accessibility, or maintenance consequence.
-> Use Open Questions for missing context that blocks confident assessment. Use Testing Gaps for missing or insufficient verification of changed behavior.
+You are one specialist lens in a parallel code review. Produce a single JSON object
+following this template exactly. The parent reviewer merges all subagent partials.
 
-### Potential blockers
-{{#if blockers}}
-{{#each blockers}}
-- **{{issue_title}}**
-  - **File**: `{{file_path}}`
-  - **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
-  - **Why potentially blocking**: {{reason}}
-  - **Suggested fix**: {{#if suggested_fix}}{{suggested_fix}}{{else}}No confident fix proposed.{{/if}}
-{{/each}}
-{{else}}
-None.
-{{/if}}
+Rules:
+- Score ONLY the pillars listed under your lens in references/json-review-schema.md.
+  Leave every other pillar as null/null/false/false.
+- Every finding in blockers, bugs, breaking_changes, suggestions, and nitpicks MUST
+  include a file path (project-root-relative) and a line number or range.
+- suggested_fix: provide when you have a high-confidence recommendation.
+  Include a fenced code block if the fix involves a source change.
+  Use "No confident fix proposed" if uncertain — never invent a fix.
+- is_blocker / is_conditional on pillar scores: advisory only.
+  The parent reviewer decides merge gating.
+- nitpicks: trivial cosmetic items only — zero correctness, accessibility, or
+  maintenance consequence.
+- open_questions: missing context that blocks confident assessment of a pillar.
+-->
 
-### Bugs
-{{#if bugs}}
-{{#each bugs}}
-- **{{issue_title}}**
-  - **File**: `{{file_path}}`
-  - **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
-  - **Impact**: {{impact_description}}
-  - **Why it matters**: {{explanation}}
-  - **Suggested fix**: {{#if suggested_fix}}{{suggested_fix}}{{else}}No confident fix proposed.{{/if}}
-{{/each}}
-{{else}}
-None.
-{{/if}}
+```json
+{
+  "agent_name": "<agent name, e.g. Security, Architecture, Performance, UX, Code/QA>",
+  "review_lens": "<short description of the specialist focus>",
 
-### Breaking Changes
-{{#if breaking_changes}}
-{{#each breaking_changes}}
-- **{{issue_title}}**
-  - **File**: `{{file_path}}`
-  - **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
-  - **What breaks**: {{what_breaks}}
-  - **Affected consumers**: {{affected_consumers}}
-  - **Migration path**: {{migration_path}}
-{{#if suggested_fix}}
-  - **Suggested fix**: {{suggested_fix}}
-{{/if}}
-{{/each}}
-{{else}}
-None.
-{{/if}}
+  "pillar_scores": {
+    "security":               { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "reliability":            { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "performance":            { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "maintainability":        { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "readability":            { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "deployment_risk":        { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "scope_integrity":        { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "requirement_alignment":  { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "dependency_risk":        { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "backward_compatibility": { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "compliance_check":       { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "observability_coverage": { "score": null, "label": null, "is_blocker": false, "is_conditional": false },
+    "data_integrity":         { "score": null, "label": null, "is_blocker": false, "is_conditional": false }
+  },
 
-### Suggestions
-{{#if suggestions}}
-{{#each suggestions}}
-- **{{issue_title}}**
-  - **File**: `{{file_path}}`
-  - **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
-  - **Why it matters**: {{explanation}}
-  - **Suggested fix**: {{#if suggested_fix}}{{suggested_fix}}{{else}}No confident fix proposed.{{/if}}
-{{/each}}
-{{else}}
-None.
-{{/if}}
+  "findings": {
 
-### Nitpicks
-{{#if nitpicks}}
-{{#each nitpicks}}
-- **{{issue_title}}**
-  - **File**: `{{file_path}}`
-  - **Lines**: `L{{line_start}}{{#if line_end}}-L{{line_end}}{{/if}}`
-  - **Note**: {{explanation}}
-{{/each}}
-{{else}}
-None.
-{{/if}}
+    "blockers": [
+      {
+        "type": "<correctness_bug|security_violation|data_loss_risk|broken_contract|missing_test|deployment_blocker|compliance_violation>",
+        "title": "<one-line summary>",
+        "description": "<detailed explanation>",
+        "why_blocks": "<concrete risk or impact that prevents merge>",
+        "resolution_required": "<exact steps or code change to resolve>",
+        "file": "<path/relative/to/project/root>",
+        "lines": "<L42 or L42-L56>",
+        "suggested_fix": "<fix description or code block, or 'No confident fix proposed'>"
+      }
+    ],
 
-### Open Questions
-{{#if open_questions}}
-{{#each open_questions}}
-- **{{question}}**
-{{#if confidence_impact}}
-  - **Affects confidence for**: {{confidence_impact}}
-{{/if}}
-{{/each}}
-{{else}}
-None.
-{{/if}}
+    "bugs": [
+      {
+        "type": "bug",
+        "title": "<one-line summary>",
+        "description": "<detailed explanation>",
+        "reason": "<why this must be fixed>",
+        "file": "<path/relative/to/project/root>",
+        "lines": "<L42 or L42-L56>",
+        "suggested_fix": "<fix description or code block, or 'No confident fix proposed'>"
+      }
+    ],
 
-### Testing Gaps
-{{#if testing_gaps}}
-{{#each testing_gaps}}
-- {{gap_description}}
-{{/each}}
-{{else}}
-None identified.
-{{/if}}
+    "breaking_changes": [
+      {
+        "type": "breaking_change",
+        "title": "<one-line summary>",
+        "description": "<what breaks and for whom>",
+        "reason": "<why this must be addressed before merge>",
+        "file": "<path/relative/to/project/root>",
+        "lines": "<L42 or L42-L56>",
+        "migration_path": "<steps callers or consumers must take>",
+        "suggested_fix": "<compatibility shim or 'No confident fix proposed'>"
+      }
+    ],
 
----
+    "suggestions": [
+      {
+        "priority": "<high|medium|low>",
+        "category": "<Maintainability|Performance|Security|Testing|Readability|Risk|Other>",
+        "title": "<one-line summary>",
+        "description": "<explanation and concrete improvement>",
+        "file": "<path/relative/to/project/root>",
+        "lines": "<L42 or L42-L56>",
+        "action_items": [ "<step 1>", "<step 2>" ]
+      }
+    ],
+
+    "nitpicks": [
+      {
+        "title": "<one-line cosmetic note>",
+        "file": "<path/relative/to/project/root>",
+        "lines": "<L42 or L42-L56>",
+        "note": "<explanation>"
+      }
+    ],
+
+    "open_questions": [
+      {
+        "question": "<what you need to know>",
+        "confidence_impact": "<which pillar or finding this blocks>"
+      }
+    ]
+
+  }
+}
+```

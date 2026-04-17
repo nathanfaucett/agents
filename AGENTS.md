@@ -70,6 +70,9 @@ ln -sf agents/<agent-name>.agent.md ~/.claude/agents/<agent-name>.agent.md
 - Pin skill versions in production. Use explicit versions for production paths, and only float to `"latest"` in non-production workflows.
 - Pin model and skill version together in production workflows when reproducibility matters.
 - Design skill scripts like tiny CLIs: runnable from command line, deterministic stdout, clear usage/errors, and known output paths.
+- Use `${SKILL_DIR}` for executable paths referenced from skill docs. `SKILL_DIR` is the absolute directory containing the active `SKILL.md`.
+- Apply `${SKILL_DIR}` to `scripts/...` command examples and other executable file paths. Prose-only mentions of `references/...` and `templates/...` can stay relative.
+- Do not traverse to sibling skills with paths like `../other-skill/scripts/...`; invoke that skill directly and use its own documented `${SKILL_DIR}` examples.
 - Avoid duplicating full procedures in system prompts; keep global behavior in system prompts and reusable procedures in skills.
 - Treat network-enabled skills as high-risk: use strict allowlists, document allowed data egress, and treat tool output as untrusted.
 - Choose models that reliably execute multi-step workflows for skill-heavy tasks; add explicit verification and output checks in `SKILL.md` when flows are brittle.

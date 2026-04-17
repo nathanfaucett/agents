@@ -6,10 +6,17 @@ under `skills/`, and instructions under `instructions/`.
 ## Instructions
 
 ```bash
-# VSCode Copilot instructions:
+# Claude:
 ln -sf $PWD/instructions/CLAUDE.md ~/.claude/CLAUDE.md
+
+# VSCode Copilot:
 ln -sf $PWD/instructions/copilot-instructions.md ~/.copilot/copilot-instructions.md
+
+# Cursor:
+mkdir -p ~/.cursor/rules
+ln -sf $PWD/instructions/cursor-instructions.mdc ~/.cursor/rules/agents.mdc
 ```
+
 
 ## Local Agents
 
@@ -60,24 +67,27 @@ done
 
 ```bash
 for skill in \
+  mattpocock/skills/caveman \
   mattpocock/skills/grill-me \
   mattpocock/skills/improve-codebase-architecture \
-  mattpocock/skills/prd-to-issues \
+  mattpocock/skills/to-issues \
+  mattpocock/skills/to-prd \
   mattpocock/skills/tdd \
-  mattpocock/skills/write-a-prd \
   mattpocock/skills/ubiquitous-language \
-  JuliusBrussee/caveman
+  vercel-labs/agent-skills/skills/web-design-guidelines
 do
   npx skills add "$skill" --global --symlink -y
 done
 ```
 
+- [caveman](https://github.com/mattpocock/skills): Enable compressed, token-efficient assistant responses.
 - [grill-me](https://github.com/mattpocock/skills): Deeply interview the user to stress-test a plan or design.
 - [improve-codebase-architecture](https://github.com/mattpocock/skills): Identify architecture improvements for testability and AI navigation.
-- [prd-to-issues](https://github.com/mattpocock/skills): Break a PRD into independent implementation issues.
+- [to-issues](https://github.com/mattpocock/skills): Break a PRD into independent implementation issues.
+- [to-prd](https://github.com/mattpocock/skills): Break a high-level goal into a structured PRD with features, user stories, and acceptance criteria.
 - [tdd](https://github.com/mattpocock/skills): Apply red-green-refactor workflows.
-- [write-a-prd](https://github.com/mattpocock/skills): Build a PRD from interviews and codebase exploration.
-- [caveman](https://github.com/JuliusBrussee/caveman): Enable compressed, token-efficient assistant responses.
+- [ubiquitous-language](https://github.com/mattpocock/skills): Establish a common language across the team to improve communication and understanding.
+- [web-design-guidelines](https://github.com/vercel-labs/agent-skills): Follow best practices for web design and user experience.
 
 ## MCP
 
