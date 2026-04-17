@@ -40,7 +40,6 @@ done
 
 Current local skills:
 
-- `agent-ready`: Analyzes a codebase to identify gaps, inconsistencies, and friction points that hinder autonomous agents or developers from effectively understanding, modifying, and extending the project.
 - `change-review`: Provides a structured code review of a proposed change, including feedback on correctness, style, maintainability, and potential impacts.
 - `github-actions`: Provides best practices and guidance for GitHub Actions workflow design, review, and troubleshooting. Use when you need correct, secure, and maintainable CI/CD workflow recommendations.
 - `openai-reusable-prompts`: Designs and improves prompt best practices and formatting structure for OpenAI use cases. Use when you need clear, consistent prompt templates, stronger instruction writing, and better formatted prompt sections.
@@ -48,7 +47,6 @@ Current local skills:
 - `refactor`: Refactor code to improve its structure, readability, and maintainability without changing its external behavior.
 - `review`: Review or analyze something, such as a document, code, or data, to provide feedback, identify issues, or suggest improvements.
 - `rewrite`: Performs a structured, opinionated, and safety-conscious full rewrite that intentionally introduces breaking changes.
-- `specs`: Runs a deterministic Spec-Driven Development (SDD) workflow using fixed files, hard phase gates, and explicit redirection.
 
 Install all local skills:
 
@@ -67,6 +65,7 @@ for skill in \
   mattpocock/skills/prd-to-issues \
   mattpocock/skills/tdd \
   mattpocock/skills/write-a-prd \
+  mattpocock/skills/ubiquitous-language \
   JuliusBrussee/caveman
 do
   npx skills add "$skill" --global --symlink -y
