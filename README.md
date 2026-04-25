@@ -89,6 +89,7 @@ Current local skills:
 - `refactor`: Refactor code to improve its structure, readability, and maintainability without changing its external behavior.
 - `review`: Review or analyze something, such as a document, code, or data, to provide feedback, identify issues, or suggest improvements.
 - `rewrite`: Performs a structured, opinionated, and safety-conscious full rewrite that intentionally introduces breaking changes.
+- `simplify`: Simplify and unify code by improving composability, clarifying module boundaries, and producing small, easy-to-use APIs.
 
 Install all local skills:
 
