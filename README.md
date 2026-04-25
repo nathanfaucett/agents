@@ -17,7 +17,6 @@ mkdir -p ~/.cursor/rules
 ln -sf $PWD/instructions/cursor-instructions.mdc ~/.cursor/rules/agents.mdc
 ```
 
-
 ## Local Agents
 
 Current local agents:
@@ -34,12 +33,48 @@ Current local agents:
 
 Note: Keep this list in sync with the `agents/` directory or generate it from the filesystem.
 
-Link all local agents into `~/.claude/agents`:
+Link all local agents into `~/.claude/agents` or `~/.cursor/rules/agents`, `~/.copilot/agents` is ignored since Copilot looks at claude agents and copilot agents:
 
 ```bash
 mkdir -p ~/.claude/agents
+mkdir -p ~/.cursor/rules/agents
 for f in agents/*.agent.md; do
   ln -sf "$PWD/$f" "$HOME/.claude/agents/$(basename "$f")"
+  ln -sf "$PWD/$f" "$HOME/.cursor/rules/agents/$(basename "$f")"
+done
+```
+
+### Remove agents
+
+```bash
+for f in agents/*.agent.md; do
+  rm -f "$HOME/.claude/agents/$(basename "$f")"
+  rm -f "$HOME/.cursor/rules/agents/$(basename "$f")"
+done
+```
+
+### External agents
+
+- `svelte-file-editor`: An agent that can read, write, and edit files in a Svelte 5 codebase.
+
+```bash
+for agent in \
+  https://raw.githubusercontent.com/sveltejs/ai-tools/refs/heads/main/tools/agents/svelte-file-editor.md
+do
+  filename=$(basename "$agent")
+  curl -L "$agent" -o "$HOME/.claude/agents/$filename"
+  curl -L "$agent" -o "$HOME/.cursor/rules/agents/$filename"
+done
+```
+
+### Remove external agents
+
+```bash
+for agent in \
+  https://raw.githubusercontent.com/sveltejs/ai-tools/refs/heads/main/tools/agents/svelte-file-editor.md
+do  filename=$(basename "$agent")
+  rm -f "$HOME/.claude/agents/$filename"
+  rm -f "$HOME/.cursor/rules/agents/$filename"
 done
 ```
 
@@ -65,6 +100,17 @@ done
 
 ## Optional External Skills
 
+- [caveman](https://github.com/mattpocock/skills): Enable compressed, token-efficient assistant responses.
+- [grill-me](https://github.com/mattpocock/skills): Deeply interview the user to stress-test a plan or design.
+- [improve-codebase-architecture](https://github.com/mattpocock/skills): Identify architecture improvements for testability and AI navigation.
+- [to-issues](https://github.com/mattpocock/skills): Break a PRD into independent implementation issues.
+- [to-prd](https://github.com/mattpocock/skills): Break a high-level goal into a structured PRD with features, user stories, and acceptance criteria.
+- [tdd](https://github.com/mattpocock/skills): Apply red-green-refactor workflows.
+- [ubiquitous-language](https://github.com/mattpocock/skills): Establish a common language across the team to improve communication and understanding.
+- [svelte-code-writer](https://github.com/sveltejs/ai-tools/tree/main/tools/skills/svelte-code-writer): A skill that can write Svelte code based on user instructions, including components, stores, and more.
+- [svelte-core-bestpractices](https://github.com/sveltejs/ai-tools/tree/main/tools/skills/svelte-core-bestpractices): A skill that provides best practices and guidance for writing Svelte code, including component design, state management, and performance optimization.
+- [web-design-guidelines](https://github.com/vercel-labs/agent-skills): Follow best practices for web design and user experience.
+
 ```bash
 for skill in \
   mattpocock/skills/caveman \
@@ -74,20 +120,13 @@ for skill in \
   mattpocock/skills/to-prd \
   mattpocock/skills/tdd \
   mattpocock/skills/ubiquitous-language \
+  sveltejs/ai-tools/tools/skills/svelte-code-writer \
+  sveltejs/ai-tools/tools/skills/svelte-core-bestpractices \
   vercel-labs/agent-skills/skills/web-design-guidelines
 do
   npx skills add "$skill" --global --symlink -y
 done
 ```
-
-- [caveman](https://github.com/mattpocock/skills): Enable compressed, token-efficient assistant responses.
-- [grill-me](https://github.com/mattpocock/skills): Deeply interview the user to stress-test a plan or design.
-- [improve-codebase-architecture](https://github.com/mattpocock/skills): Identify architecture improvements for testability and AI navigation.
-- [to-issues](https://github.com/mattpocock/skills): Break a PRD into independent implementation issues.
-- [to-prd](https://github.com/mattpocock/skills): Break a high-level goal into a structured PRD with features, user stories, and acceptance criteria.
-- [tdd](https://github.com/mattpocock/skills): Apply red-green-refactor workflows.
-- [ubiquitous-language](https://github.com/mattpocock/skills): Establish a common language across the team to improve communication and understanding.
-- [web-design-guidelines](https://github.com/vercel-labs/agent-skills): Follow best practices for web design and user experience.
 
 ## MCP
 
