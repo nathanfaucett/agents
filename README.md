@@ -114,13 +114,10 @@ done
 
 ```bash
 for skill in \
-  mattpocock/skills/caveman \
-  mattpocock/skills/grill-me \
-  mattpocock/skills/improve-codebase-architecture \
-  mattpocock/skills/to-issues \
-  mattpocock/skills/to-prd \
-  mattpocock/skills/tdd \
-  mattpocock/skills/ubiquitous-language \
+  mattpocock/skills/skills/engineering/improve-codebase-architecture \
+  mattpocock/skills/skills/engineering/to-issues \
+  mattpocock/skills/skills/engineering/to-prd \
+  mattpocock/skills/skills/engineering/tdd \
   sveltejs/ai-tools/tools/skills/svelte-code-writer \
   sveltejs/ai-tools/tools/skills/svelte-core-bestpractices \
   vercel-labs/agent-skills/skills/web-design-guidelines
