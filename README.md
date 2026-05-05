@@ -7,17 +7,21 @@ under `skills/`, and instructions under `instructions/`.
 
 ```bash
 # Codex
-ln -sf $PWD/instructions/CODEX.md ~/.codex/AGENTS.md
+ln -sf $PWD/instructions/AGENTS.md ~/.codex/AGENTS.md
 
 # Claude:
-ln -sf $PWD/instructions/CLAUDE.md ~/.claude/CLAUDE.md
+ln -sf $PWD/instructions/AGENTS.md ~/.claude/CLAUDE.md
 
 # VSCode Copilot:
-ln -sf $PWD/instructions/copilot-instructions.md ~/.copilot/copilot-instructions.md
+ln -sf $PWD/instructions/AGENTS.md ~/.copilot/copilot-instructions.md
 
 # Cursor:
 mkdir -p ~/.cursor/rules
 ln -sf $PWD/instructions/cursor-instructions.mdc ~/.cursor/rules/agents.mdc
+
+# Continue
+mkdir -p ~/.continue/rules
+ln -sf $PWD/instructions/continue-instructions.mdc ~/.cursor/rules/agents.mdc
 ```
 
 ## Local Agents

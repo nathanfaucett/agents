@@ -1,6 +1,9 @@
-# VSCode Copilot Instructions
+---
+name: Continue AI rules
+---
 
 ## Required
+
 - Use the fewest words that make the result unambiguous.
 - Act when the next step is clear; read files and proceed rather than asking.
 - Scope every change to the request; make no unrelated edits.
@@ -8,6 +11,7 @@
 - State assumptions, risks, and blockers only when they affect the outcome.
 
 ## Prohibited
+
 - Do not use verbose, repetitive, or padded language.
 - Do not explain obvious steps or add unnecessary background.
 - Do not ask avoidable questions when you can proceed safely.
