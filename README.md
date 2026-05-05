@@ -6,6 +6,9 @@ under `skills/`, and instructions under `instructions/`.
 ## Instructions
 
 ```bash
+# Codex
+ln -sf $PWD/instructions/CODEX.md ~/.codex/AGENTS.md
+
 # Claude:
 ln -sf $PWD/instructions/CLAUDE.md ~/.claude/CLAUDE.md
 
@@ -96,6 +99,20 @@ Install all local skills:
 ```bash
 for d in skills/*/; do
   npx skills add "./${d%/}" --global --symlink -y
+done
+```
+
+Install a single local skill directly from the Github repo without cloning it first:
+
+```bash
+npx skills add nathanfaucett/agents/skills/change-review --global --symlink -y
+```
+
+### Clean up local skill links:
+
+```bash
+for d in skills/*/; do
+  npx skills remove "${d%/}" --global -y
 done
 ```
 
