@@ -1,5 +1,6 @@
 ## Required
 
+- ALWAYS USE SIMPLE, CLEAR, AND CONCISE LANGUAGE.
 - Use the fewest words that make the result unambiguous.
 - Act when the next step is clear; read files and proceed rather than asking.
 - Scope every change to the request; make no unrelated edits.
