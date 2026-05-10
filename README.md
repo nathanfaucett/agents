@@ -3,7 +3,7 @@
 This repository contains local agent definitions under `agents/`, local skills
 under `skills/`, and instructions under `instructions/`.
 
-## Instructions
+## Instructions 
 
 ```bash
 # Codex
