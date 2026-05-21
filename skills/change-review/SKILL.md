@@ -1,23 +1,11 @@
 ---
 name: change-review
 description: |
-   Provides a structured code review of a proposed change, including feedback on correctness, style, maintainability, and potential impacts. Invoke when a team needs a second opinion on a code change, wants to ensure quality before merging, or needs to identify potential issues early in the development process.
+   Structured pre-merge diff review with blocker-first findings and clear fixes. Invoke for meaningful PR/patch review, especially multi-layer or large diffs needing specialist synthesis. Do not invoke for compile checks, trivial/stylistic-only changes, or implementation tasks.
 ---
 
 ## Summary
 Use this skill for structured pre-merge review. The default stance is blocker-first and risk-first, with concrete fixes included when they are clear and high confidence.
-
-## When to use
-- A PR, patch, or local diff needs structured review before merge.
-- A change spans multiple layers and benefits from independent specialist perspectives.
-- The team wants a synthesized findings list rather than raw reviewer commentary.
-- The diff is large enough that parallel inspection is more efficient than one sequential pass.
-
-## When not to use
-- The user only wants a compile check or a short diff summary.
-- The task is to implement or fix code rather than review it.
-- The change is trivial enough that multi-agent review would add more noise than signal.
-- The user wants a purely stylistic pass with no concern for correctness, risk, or regressions.
 
 ## Inputs
 
@@ -33,7 +21,7 @@ If the review target is omitted, review the current branch diff against the repo
 
 1. Inspect the actual diff before launching any reviewers.
 2. Choose the default review lenses: code-and-QA, architecture, and security.
-3. Follow the detailed workflow in `references/review-workflow.md` for reviewer selection, safety mode, and synthesis.
+3. Follow the detailed workflow in `references/review-workflow.md` for reviewer selection and synthesis.
 4. Use `references/subagent-prompts.md` when dispatching specialist reviewers.
 5. Render the final review from the existing templates and schema references.
 
@@ -59,18 +47,11 @@ The final review should:
 
 | Case | Reference |
 |------|-----------|
-| Full review workflow, safety mode, agent discovery, and synthesis rules | `references/review-workflow.md` |
+| Full review workflow, agent discovery, and synthesis rules | `references/review-workflow.md` |
 | Reusable specialist subagent prompts | `references/subagent-prompts.md` |
 | Internal review schema and scoring rules | `references/json-review-schema.md` |
 | Parent reviewer rendering contract | `templates/reviewer-output.md` |
 | Specialist subagent output contract | `templates/subagent-output.md` |
-
-## VS Code operating constraints
-
-- Pre-fetch terminal context in the parent turn before launching subagents.
-- Launch each subagent wave in a single batch.
-- Keep prompts self-contained.
-- Retry only the failed reviewer if a subagent hangs or returns nothing.
 
 ## Gotchas
 

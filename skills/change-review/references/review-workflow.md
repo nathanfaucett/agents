@@ -46,21 +46,6 @@ Return markdown only. Follow `templates/reviewer-output.md` for the final format
 - Keep specialists independent and deduplicate overlapping findings in the parent synthesis.
 - Preserve structured file and line metadata all the way through draft-comment generation.
 
-## Large-project safety mode
-
-Enable this mode when any of the following are true:
-
-- More than 150 changed files.
-- More than 10,000 changed lines.
-- The diff is too large to review in one pass.
-
-When safety mode is active:
-
-- Use a two-pass review: triage first, then deep review of prioritized chunks.
-- Keep chunks to about 25 files or 2,500 changed lines.
-- Group chunks by concern such as auth, infra, UI, data model, or tests.
-- State coverage clearly if the review is partial.
-
 ## Parallel review workflow
 
 1. Establish the review target.
@@ -113,7 +98,6 @@ Build a roster from `agents/*.agent.md`:
 ## Parent reviewer checklist
 
 - Diff and changed files inspected directly.
-- Scale assessed and safety mode enabled when needed.
 - Relevant surrounding code read.
 - Agent roster built from the local `agents/` directory.
 - Each subagent wave launched in a single batch.
