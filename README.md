@@ -142,7 +142,8 @@ for skill in \
   mattpocock/skills/skills/productivity/handoff \
   sveltejs/ai-tools/tools/skills/svelte-code-writer \
   sveltejs/ai-tools/tools/skills/svelte-core-bestpractices \
-  vercel-labs/agent-skills/skills/web-design-guidelines
+  vercel-labs/agent-skills/skills/web-design-guidelines \
+  Aas-ee/open-webSearch/skills/open-websearch
 do
   npx skills add "$skill" --global --symlink -y
 done
@@ -151,3 +152,4 @@ done
 ## MCP
 
 - [@sveltejs/mcp](https://github.com/sveltejs/ai-tools)
+- [open-websearch](https://github.com/aas-ee/open-websearch)
