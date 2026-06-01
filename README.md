@@ -15,6 +15,9 @@ ln -sf $PWD/instructions/AGENTS.md ~/.claude/CLAUDE.md
 # VSCode Copilot:
 ln -sf $PWD/instructions/AGENTS.md ~/.copilot/copilot-instructions.md
 
+# Zed 
+ln -sf $PWD/instructions/AGENTS.md ~/.config/zed/AGENTS.md
+
 # Cursor:
 mkdir -p ~/.cursor/rules
 ln -sf $PWD/instructions/cursor-instructions.mdc ~/.cursor/rules/agents.mdc
