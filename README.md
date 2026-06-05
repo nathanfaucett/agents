@@ -135,6 +135,8 @@ done
 - [svelte-code-writer](https://github.com/sveltejs/ai-tools/tree/main/tools/skills/svelte-code-writer): A skill that can write Svelte code based on user instructions, including components, stores, and more.
 - [svelte-core-bestpractices](https://github.com/sveltejs/ai-tools/tree/main/tools/skills/svelte-core-bestpractices): A skill that provides best practices and guidance for writing Svelte code, including component design, state management, and performance optimization.
 - [web-design-guidelines](https://github.com/vercel-labs/agent-skills): Follow best practices for web design and user experience.
+- [open-websearch](https://github.com/aas-ee/open-websearch): A skill for performing web searches and retrieving relevant information.
+- [graphify](https://github.com/safishamsi/graphify): AI coding assistant and it maps your entire project
 
 ```bash
 for skill in \
@@ -150,6 +152,17 @@ for skill in \
 do
   npx skills add "$skill" --global --symlink -y
 done
+```
+
+### Skills that do not fit the npx skills install pattern can be installed manually, such as graphify:
+
+#### Graphifyy
+```bash
+uv tool install graphifyy[ollama]
+export OLLAMA_BASE_URL=http://10.0.0.145:11434/v1
+export OLLAMA_API_KEY="unused"
+export GRAPHIFY_MODEL="gpt-oss:20b"
+graphify install
 ```
 
 ## MCP
