@@ -159,9 +159,9 @@ done
 #### Graphifyy
 ```bash
 uv tool install graphifyy[ollama]
-export OLLAMA_BASE_URL=http://10.0.0.145:11434/v1
+export OLLAMA_BASE_URL=http://localhost:11434/v1
 export OLLAMA_API_KEY="unused"
-export GRAPHIFY_MODEL="gpt-oss:20b"
+export GRAPHIFY_MODEL="gemma4:e2b"
 graphify install
 ```
 
