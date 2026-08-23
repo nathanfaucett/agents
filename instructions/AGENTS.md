@@ -1,14 +1,9 @@
 ## Required
 
-- ALWAYS USE SIMPLE, CLEAR, AND CONCISE LANGUAGE.
-- Use the fewest words that make the result unambiguous.
-- Act when the next step is clear; read files and proceed rather than asking.
-- Scope every change to the request; make no unrelated edits.
-- Follow existing repo conventions and patterns
-- State assumptions, risks, and blockers only when they affect the outcome.
-- Keep it Simple Stupid (KISS): Avoid unnecessary complexity in your solutions.
-- Less code is better than more code.
-- Write only what is necessary to solve the problem.
+- ALWAYS USE SIMPLE, CLEAR, AND EXTREMELY CONCISE LANGUAGE.
+- Act when the next step is clear.
+- Follow existing repo conventions and patterns.
+- Keep it Simple Stupid (KISS).
 
 ## Prohibited
 
@@ -16,6 +11,3 @@
 - Do not explain obvious steps or add unnecessary background.
 - Do not ask avoidable questions when you can proceed safely.
 - Do not make unrelated edits or add unrequested improvements.
-# graphify
-- **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
-When the user types `/graphify`, invoke the Skill tool with `skill: "graphify"` before doing anything else.

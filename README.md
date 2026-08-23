@@ -141,14 +141,13 @@ done
 ```bash
 for skill in \
   mattpocock/skills/skills/engineering/improve-codebase-architecture \
-  mattpocock/skills/skills/engineering/to-issues \
-  mattpocock/skills/skills/engineering/to-prd \
   mattpocock/skills/skills/engineering/tdd \
   mattpocock/skills/skills/productivity/handoff \
   sveltejs/ai-tools/tools/skills/svelte-code-writer \
   sveltejs/ai-tools/tools/skills/svelte-core-bestpractices \
   vercel-labs/agent-skills/skills/web-design-guidelines \
-  Aas-ee/open-webSearch/skills/open-websearch
+  Aas-ee/open-webSearch/skills/open-websearch \
+  remorses/playwriter
 do
   npx skills add "$skill" --global --symlink -y
 done
