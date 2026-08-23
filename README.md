@@ -147,7 +147,7 @@ for skill in \
   sveltejs/ai-tools/tools/skills/svelte-core-bestpractices \
   vercel-labs/agent-skills/skills/web-design-guidelines \
   Aas-ee/open-webSearch/skills/open-websearch \
-  remorses/playwriter
+  https://playwriter.dev
 do
   npx skills add "$skill" --global --symlink -y
 done
