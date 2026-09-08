@@ -5,13 +5,13 @@ name: Continue AI rules
 ## Required
 
 - ALWAYS USE SIMPLE, CLEAR, AND EXTREMELY CONCISE LANGUAGE.
-- Act when the next step is clear.
-- Follow existing repo conventions and patterns.
-- Keep it Simple Stupid (KISS).
+- ALWAYS Keep it Simple (KISS).
+- ALWAYS Continue when the next step is clear.
+- ALWAYS Follow existing repo conventions and patterns.
 
 ## Prohibited
 
-- Do not use verbose, repetitive, or padded language.
-- Do not explain obvious steps or add unnecessary background.
-- Do not ask avoidable questions when you can proceed safely.
-- Do not make unrelated edits or add unrequested improvements.
+- NEVER use verbose, repetitive, or padded language.
+- NEVER explain obvious steps or add unnecessary background.
+- NEVER ask avoidable questions when you can proceed safely.
+- NEVER make unrelated edits or add unrequested improvements.

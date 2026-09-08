@@ -3,7 +3,7 @@
 This repository contains local agent definitions under `agents/`, local skills
 under `skills/`, and instructions under `instructions/`.
 
-## Instructions 
+## Instructions
 
 ```bash
 # Codex
@@ -15,7 +15,7 @@ ln -sf $PWD/instructions/AGENTS.md ~/.claude/CLAUDE.md
 # VSCode Copilot:
 ln -sf $PWD/instructions/AGENTS.md ~/.copilot/copilot-instructions.md
 
-# Zed 
+# Zed
 ln -sf $PWD/instructions/AGENTS.md ~/.config/zed/AGENTS.md
 
 # Cursor:
@@ -147,21 +147,11 @@ for skill in \
   sveltejs/ai-tools/tools/skills/svelte-core-bestpractices \
   vercel-labs/agent-skills/skills/web-design-guidelines \
   Aas-ee/open-webSearch/skills/open-websearch \
-  https://playwriter.dev
+  https://playwriter.dev \
+  DietrichGebert/ponytail/skills/ponytail
 do
   npx skills add "$skill" --global --symlink -y
 done
-```
-
-### Skills that do not fit the npx skills install pattern can be installed manually, such as graphify:
-
-#### Graphifyy
-```bash
-uv tool install graphifyy[ollama]
-export OLLAMA_BASE_URL=http://localhost:11434/v1
-export OLLAMA_API_KEY="unused"
-export GRAPHIFY_MODEL="gemma4:e2b"
-graphify install
 ```
 
 ## MCP
