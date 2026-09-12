@@ -59,10 +59,7 @@ done
 
 ## Optional External Skills
 
-- [improve-codebase-architecture](https://github.com/mattpocock/skills): Identify architecture improvements for testability and AI navigation.
-- [grill-with-docs](https://github.com/mattpocock/skills): A relentless interview to sharpen a plan or design.
-- [tdd](https://github.com/mattpocock/skills): Apply red-green-refactor workflows.
-- [handoff](https://github.com/mattpocock/skills): Handoff context to other agents to continue work.
+- [Matt Pocock Skills](https://github.com/mattpocock/skills): A collection of skills for software engineering and productivity
 - [svelte-code-writer](https://github.com/sveltejs/ai-tools/tree/main/tools/skills/svelte-code-writer): A skill that can write Svelte code based on user instructions, including components, stores, and more.
 - [svelte-core-bestpractices](https://github.com/sveltejs/ai-tools/tree/main/tools/skills/svelte-core-bestpractices): A skill that provides best practices and guidance for writing Svelte code, including component design, state management, and performance optimization.
 - [web-design-guidelines](https://github.com/vercel-labs/agent-skills): Follow best practices for web design and user experience.
@@ -74,6 +71,8 @@ done
 for skill in \
   mattpocock/skills/skills/engineering/improve-codebase-architecture \
   mattpocock/skills/skills/engineering/grill-with-docs \
+  mattpocock/skills/skills/productivity/grilling \
+  mattpocock/skills/skills/engineering/domain-modeling \
   mattpocock/skills/skills/engineering/tdd \
   mattpocock/skills/skills/productivity/handoff \
   sveltejs/ai-tools/tools/skills/svelte-code-writer \
