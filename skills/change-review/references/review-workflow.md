@@ -3,27 +3,21 @@
 ## Process
 
 1. Identify the target and expected behavior.
-2. Inspect the diff and relevant callers, tests, contracts, and configuration.
+2. Inspect the diff, callers, tests, contracts, and configuration.
 3. Select perspectives:
-   - Always: code/QA.
+   - Always: code/QA and design.
    - Usually: architecture and security.
    - When relevant: UX, performance, data, or deployment.
-4. Launch one subagent per perspective in parallel. Ask each to think about the code from that perspective; do not invoke named or repository-defined agents.
-5. Check each reported issue against the code.
-6. Merge duplicates and order by severity.
+4. Run one parallel subagent per perspective; do not invoke repository-defined agents.
+5. Verify, deduplicate, and prioritize findings.
 
-For branch reviews, prefer a merge-base diff against the remote default branch. Ask if the base cannot be determined safely.
+**Design** asks whether the change is the smallest suitable solution to a demonstrated problem. Flag only a concrete simpler existing path, unneeded abstraction/configuration/dependency, or a wrong seam; otherwise raise an Open Question. Keep it separate from scope creep: scope creep exceeds the spec; design challenges the specified approach.
 
-## Finding standard
+For branch reviews, prefer a merge-base diff against the remote default branch. Ask if the base is unsafe to determine.
 
-Report an issue only when it is actionable and supported by evidence. Include:
+## Findings
 
-- Severity: Blocker, Bug, Breaking Change, or Suggestion.
-- Project-relative file and line range.
-- Impact.
-- Fix, when clear.
-
-Use Open Questions for risks that depend on missing context. Omit nitpicks unless requested.
+Report only actionable, evidence-backed issues with severity (Blocker, Bug, Breaking Change, or Suggestion), project-relative location, impact, and a fix when clear. Put missing-context risks in Open Questions; omit nitpicks.
 
 ## Output
 
@@ -31,13 +25,17 @@ Use Open Questions for risks that depend on missing context. Omit nitpicks unles
 ## Review
 
 ### Blockers
+
 - **Title** — `path/to/file.ts:L10-L15`
   Impact and fix.
 
 ### Bugs
+
 ### Breaking Changes
+
 ### Suggestions
+
 ### Open Questions
 ```
 
-Omit empty sections. If no findings remain after verification, say so and note any untested areas.
+Omit empty sections. If none remain, say so and note untested areas.
