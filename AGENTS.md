@@ -2,48 +2,22 @@
 
 ## Summary
 
-This document defines the repository rules for agent files and skill files.
+This document defines the repository rules for skill files.
 
-It standardizes file locations, frontmatter constraints, and size/structure limits so agents and skills remain compatible with existing tooling.
+It standardizes file locations, frontmatter constraints, and size/structure limits so skills remain compatible with existing tooling.
 
 ## When to use
 
-- You are creating a new agent definition.
 - You are creating a new skill package.
-- You are reviewing or fixing frontmatter for agent/skill metadata.
+- You are reviewing or fixing frontmatter for skill metadata.
 - You are validating repository compatibility with `npx skills`.
 
 ## When not to use
 
-- You need runtime implementation guidance unrelated to agent/skill metadata.
+- You need runtime implementation guidance unrelated to skill metadata.
 - You are making feature-specific code decisions outside file-format constraints.
 
 ## Procedure
-
-### Agent flow
-
-1. Place agent files in the correct location.
-
-- Store all agents under `agents/<agent-name>.agent.md`.
-- Link agent files to the global agents folder with:
-
-```bash
-ln -sf agents/<agent-name>.agent.md ~/.claude/agents/<agent-name>.agent.md
-```
-
-2. Validate `<agent-name>.agent.md` frontmatter.
-
-- `name` is required.
-- `name` max length is 64 characters.
-- `name` must use lowercase letters, numbers, and hyphens only.
-- `name` cannot start or end with a hyphen.
-- `name` cannot contain consecutive hyphens.
-- `name` must match the file name exactly.
-- `name` cannot contain `anthropic` or `claude`.
-- `description` is required.
-- `description` max length is 1024 characters.
-- `description` must be written in third person.
-- `description` must describe both what it does and when to trigger it.
 
 ### Skill flow
 
@@ -69,7 +43,7 @@ ln -sf agents/<agent-name>.agent.md ~/.claude/agents/<agent-name>.agent.md
 
 3. Validate skill body structure.
 
-- Keep `SKILL.md` under 500 lines.
+- Keep `SKILL.md` under 100 lines.
 - Move detailed reference material into `references/` within the skill folder.
 - Put helper scripts in `scripts/` within the skill folder.
 
