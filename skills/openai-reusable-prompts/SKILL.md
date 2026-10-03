@@ -12,6 +12,8 @@ This skill focuses only on writing high-quality prompts and formatting them for 
 
 It helps define prompt structure, wording quality, examples, and formatting patterns for reliable outputs.
 
+See [references](references/) for detailed OpenAI prompt engineering guides.
+
 ## When to use
 
 - You want better-written prompts with clear instruction hierarchy.
@@ -51,54 +53,46 @@ If details are missing, ask only the minimum needed to author a usable v1 templa
 
 ## Procedure
 
-1. Define the target behavior.
+1. **Define the target behavior**
+   - Write a one-sentence objective for the prompt.
+   - Define success as observable output criteria.
 
-- Write a one-sentence objective for the prompt.
-- Define success as observable output criteria.
+2. **Set instruction hierarchy**
+   - Put high-priority behavior first.
+   - Separate required rules from preferences.
+   - State what the model must do and must not do.
+   - Put reusable application rules in the Responses API `instructions` parameter or a `developer` message; they take priority over `user` input.
+   - Do not rely on `instructions` from a prior turn when using `previous_response_id`; send them again.
 
-2. Set instruction hierarchy.
+3. **Draft the prompt with consistent formatting**
+   - Use clear section headers in this order when useful: `Identity`, `Instructions`, `Examples`, `Context`.
+   - Keep instructions explicit and testable.
+   - Use placeholders for dynamic values, for example `{{customer_name}}`.
+   - Keep stable, repeated content near the beginning to improve prompt-cache savings.
 
-- Put high-priority behavior first.
-- Separate required rules from preferences.
-- State what the model must do and must not do.
-- Put reusable application rules in the Responses API `instructions` parameter or a `developer` message; they take priority over `user` input.
-- Do not rely on `instructions` from a prior turn when using `previous_response_id`; send them again.
+4. **Strengthen formatting discipline**
+   - Use bullet lists for constraints and output rules.
+   - Use XML-style delimiters for example I/O blocks when helpful.
+   - Avoid long paragraphs that hide requirements.
 
-3. Draft the prompt with consistent formatting.
+5. **Add examples that teach behavior**
+   - Use a diverse handful of examples when they materially improve reliability, especially for strict formats.
+   - Cover common and edge inputs.
+   - Keep examples consistent with stated rules.
 
-- Use clear section headers in this order when useful: `Identity`, `Instructions`, `Examples`, `Context`.
-- Keep instructions explicit and testable.
-- Use placeholders for dynamic values, for example `{{customer_name}}`.
-- Keep stable, repeated content near the beginning to improve prompt-cache savings.
+6. **Add output contract checks**
+   - Specify exact format expectations (fields, ordering, allowed labels).
+   - Add explicit negative constraints to reduce drift.
 
-4. Strengthen formatting discipline.
+7. **Revise for clarity and brevity**
+   - Remove redundant instructions.
+   - Replace vague wording with measurable requirements.
+   - Keep only context that changes model decisions.
+   - For GPT models, use precise instructions. For reasoning models, begin with higher-level goals and add detail only when evaluation results require it.
 
-- Use bullet lists for constraints and output rules.
-- Use XML-style delimiters for example I/O blocks when helpful.
-- Avoid long paragraphs that hide requirements.
-
-5. Add examples that teach behavior.
-
-- Use a diverse handful of examples when they materially improve reliability, especially for strict formats.
-- Cover common and edge inputs.
-- Keep examples consistent with stated rules.
-
-6. Add output contract checks.
-
-- Specify exact format expectations (fields, ordering, allowed labels).
-- Add explicit negative constraints to reduce drift.
-
-7. Revise for clarity and brevity.
-
-- Remove redundant instructions.
-- Replace vague wording with measurable requirements.
-- Keep only context that changes model decisions.
-- For GPT models, use precise instructions. For reasoning models, begin with higher-level goals and add detail only when evaluation results require it.
-
-8. Add operational readiness notes when the prompt will be used as a skill artifact.
-
-- Include when to use, how to run, expected outputs, and gotchas.
-- Add explicit verification steps and output checks for brittle multi-step workflows.
+8. **Add operational readiness notes when the prompt will be used as a skill artifact**
+   - Include when to use, how to run, expected outputs, and gotchas.
+   - Add explicit verification steps and output checks for brittle multi-step workflows.
 
 ## Branching logic
 
@@ -145,43 +139,36 @@ A skill run is complete when all are true:
 Apply these when the prompt template is packaged as an agent skill, not as an OpenAI API prompt object.
 
 1. Keep skills discoverable.
-
-- Use clear frontmatter `name` and `description`.
-- Keep explicit "Use when" and "Do not use when" guidance.
-- Include negative examples with positive examples.
+   - Use clear frontmatter `name` and `description`.
+   - Keep explicit "Use when" and "Do not use when" guidance.
+   - Include negative examples with positive examples.
 
 2. Keep system prompts lean.
-
-- Put stable, reusable procedures in skills.
-- Keep global policies and always-on behavior in system prompts.
-- Do not duplicate full skill procedures in system prompts.
+   - Put stable, reusable procedures in skills.
+   - Keep global policies and always-on behavior in system prompts.
+   - Do not duplicate full skill procedures in system prompts.
 
 3. Design script-backed skills like tiny CLIs.
-
-- Ensure commands run from the command line.
-- Require deterministic stdout for key status and results.
-- Fail loudly with clear usage or validation errors.
-- Write outputs to known, documented file paths.
+   - Ensure commands run from the command line.
+   - Require deterministic stdout for key status and results.
+   - Fail loudly with clear usage or validation errors.
+   - Write outputs to known, documented file paths.
 
 4. Include worked examples in skill assets.
-
-- Provide inputs, commands, and expected outputs.
-- Cover normal cases and at least one edge case.
+   - Provide inputs, commands, and expected outputs.
+   - Cover normal cases and at least one edge case.
 
 5. Add explicit verification gates.
-
-- Validate output format and required fields.
-- Confirm artifacts exist at expected paths.
-- Add checks that catch partial completion.
+   - Validate output format and required fields.
+   - Confirm artifacts exist at expected paths.
+   - Add checks that catch partial completion.
 
 6. Be cautious with network access.
-
-- Prefer no-network execution when possible.
-- If network access is required, use strict allowlists and explicit data-egress constraints.
+   - Prefer no-network execution when possible.
+   - If network access is required, use strict allowlists and explicit data-egress constraints.
 
 7. Use a model that can reliably complete multi-step workflows.
-
-- If execution is brittle, simplify the workflow and strengthen verification guidance.
+   - If execution is brittle, simplify the workflow and strengthen verification guidance.
 
 ## Reproducibility and versioning
 
