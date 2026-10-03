@@ -74,10 +74,13 @@ done
 for skill in \
   mattpocock/skills/skills/engineering/improve-codebase-architecture \
   mattpocock/skills/skills/engineering/grill-with-docs \
-  mattpocock/skills/skills/productivity/grilling \
+  mattpocock/skills/skills/engineering/research \
+  mattpocock/skills/skills/engineering/prototype \
+  mattpocock/skills/skills/engineering/codebase-design \
   mattpocock/skills/skills/engineering/domain-modeling \
   mattpocock/skills/skills/engineering/tdd \
   mattpocock/skills/skills/productivity/handoff \
+  mattpocock/skills/skills/productivity/grilling \
   sveltejs/ai-tools/tools/skills/svelte-code-writer \
   sveltejs/ai-tools/tools/skills/svelte-core-bestpractices \
   vercel-labs/agent-skills/skills/web-design-guidelines \
