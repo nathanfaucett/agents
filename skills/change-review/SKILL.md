@@ -1,6 +1,7 @@
 ---
 name: change-review
-description: Reviews meaningful PRs and patches from relevant technical perspectives, then reports blocker-first findings with clear fixes. Use for pre-merge code review, especially broad or risky changes. Do not use for build checks, trivial style review, or implementation.
+description: Reviews meaningful MRs/PRs and patches from relevant technical perspectives, then reports blocker-first findings with clear fixes. Use for code review, especially broad or risky changes. Do not use for build checks or trivial style review.
+disable-model-invocation: true
 ---
 
 # Change Review

@@ -22,10 +22,6 @@ ln -sf $PWD/instructions/AGENTS.md ~/.config/zed/AGENTS.md
 mkdir -p ~/.cursor/rules
 ln -sf $PWD/instructions/cursor-instructions.mdc ~/.cursor/rules/agents.mdc
 
-# Continue
-mkdir -p ~/.continue/rules
-ln -sf $PWD/instructions/continue-instructions.mdc ~/.cursor/rules/agents.mdc
-
 # Antigravity / Gemini
 mkdir -p ~/.gemini
 ln -sf $PWD/instructions/AGENTS.md ~/.gemini/GEMINI.md
@@ -37,8 +33,16 @@ Current local skills:
 
 - `change-review`: Provides a structured code review of a proposed change, including feedback on correctness, style, maintainability, and potential impacts.
 - `github-actions`: Provides best practices and guidance for GitHub Actions workflow design, review, and troubleshooting. Use when you need correct, secure, and maintainable CI/CD workflow recommendations.
+- `implement`: Implements a piece of work based on a spec or set of tickets.
+- `implement-spec`: Implements a piece of work based on a spec or set of tickets, with a focus on following the spec closely and ensuring that the implementation meets the requirements.
 - `openai-reusable-prompts`: Designs and improves prompt best practices and formatting structure for OpenAI use cases. Use when you need clear, consistent prompt templates, stronger instruction writing, and better formatted prompt sections.
-  Install all local skills:
+- `setup-issue-tracker`: Sets up the issue tracker for managing and tracking the implementation of the spec and tickets.
+- `to-spec`: Converts a user request into a detailed specification.
+- `to-tickets`: Breaks down a spec into actionable tickets.
+- `triage`: Reviews a spec or set of tickets and provides feedback on correctness, clarity, and completeness. Use when you need to ensure that the spec or tickets are well-defined and actionable.
+- `wayfinder`: Provides guidance and recommendations for navigating complex codebases, including identifying relevant files, understanding dependencies, and locating key functionality.
+
+Install all local skills:
 
 ```bash
 for d in skills/*/; do

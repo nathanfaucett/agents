@@ -97,3 +97,17 @@ A rules update is complete when all are true:
 - Do not place skills outside `skills/<skill-name>/SKILL.md`.
 - Do not use names that violate character or length constraints.
 - Do not omit trigger guidance from `description` fields.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as local markdown files under `.scratch/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-role vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout (`GLOSSARY.md` + `docs/adr/` at root). See `docs/agents/domain.md`.
