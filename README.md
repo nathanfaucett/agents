@@ -40,7 +40,6 @@ Current local skills:
 - `to-spec`: Converts a user request into a detailed specification.
 - `to-tickets`: Breaks down a spec into actionable tickets.
 - `triage`: Reviews a spec or set of tickets and provides feedback on correctness, clarity, and completeness. Use when you need to ensure that the spec or tickets are well-defined and actionable.
--
 
 Install all local skills:
 
