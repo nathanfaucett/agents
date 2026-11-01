@@ -20,7 +20,7 @@ Without a target, compare the branch with the default branch.
 
 - Report correctness, security, data, runtime, deployment, and critical-test risks first.
 - Findings need a project-relative location, evidence, impact, and a clear fix when available.
-- Design findings require a concrete simpler path; otherwise use Open Questions for missing intent.
+- Design findings require a concrete simpler path, and verify the change's intent aligns with the project's overall goals; otherwise, use Open Questions for missing or misaligned intent.
 - Omit unverified concerns, empty sections, and cosmetic comments.
 
 ## Use when

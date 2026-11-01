@@ -1,6 +1,6 @@
 ---
 name: ollama-decision
-description: Make quick local decisions with Ollama System One (yes/no, choice, or score). Use when an agent needs a fast structured classification or judgment against text or JSON without free-form generation. Triggers on ollama decision, systemone, laya, local decision, classify, route, score urgency, or quick yes/no judgment.
+description: This skill facilitates quick, local, structured decision-making using Ollama System One (yes/no, choice, or score). It is used when an agent requires fast structured classification or judgment against text or JSON, avoiding free-form generation. It is triggered by phrases such as ollama decision, systemone, laya, local decision, classify, route, score urgency, or quick yes/no judgment.
 ---
 
 # Ollama Decision
