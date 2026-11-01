@@ -33,6 +33,7 @@ Current local skills:
 
 - `change-review`: Provides a structured code review of a proposed change, including feedback on correctness, style, maintainability, and potential impacts.
 - `ollama-decision`: Helps make decisions by evaluating options, considering trade-offs, and providing recommendations based on the given criteria.
+- `obsidian-cli`: Provides seamless integration with Obsidian CLI for note-taking and knowledge management.
 - `github-actions`: Provides best practices and guidance for GitHub Actions workflow design, review, and troubleshooting. Use when you need correct, secure, and maintainable CI/CD workflow recommendations.
 - `implement`: Implements a piece of work based on a spec or set of tickets.
 - `implement-spec`: Implements a piece of work based on a spec or set of tickets, with a focus on following the spec closely and ensuring that the implementation meets the requirements.
