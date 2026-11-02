@@ -1,0 +1,4 @@
+- "Rewrite this prompt using Identity, Instructions, Examples, Context sections while preserving intent: {prompt}."
+- "Tighten this prompt to eliminate ambiguity and enforce this format: {format-rules}."
+- "Add high-quality examples to teach this behavior: {objective}."
+- "Convert this long paragraph prompt into a concise, structured prompt with explicit constraints."

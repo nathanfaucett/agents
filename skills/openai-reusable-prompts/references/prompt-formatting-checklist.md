@@ -1,0 +1,11 @@
+- [ ] Objective is one sentence and testable
+- [ ] Required behavior is listed before optional preferences
+- [ ] Output format is explicit and easy to verify
+- [ ] Examples are diverse and included when they materially improve reliability
+- [ ] Negative constraints are included
+- [ ] Context is minimal and relevant
+- [ ] No contradictory instructions
+- [ ] "Use when" and "Do not use when" routing guidance is explicit
+- [ ] At least one negative trigger example is included
+- [ ] Prompt is code-managed, model snapshot is pinned when needed, and rollout intent is defined
+- [ ] Verification steps and output checks are defined for multi-step workflows
