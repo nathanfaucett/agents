@@ -84,6 +84,7 @@ for skill in \
   mattpocock/skills/skills/engineering/codebase-design \
   mattpocock/skills/skills/engineering/domain-modeling \
   mattpocock/skills/skills/engineering/tdd \
+  mattpocock/skills/skills/engineering/retro \
   mattpocock/skills/skills/productivity/handoff \
   mattpocock/skills/skills/productivity/grilling \
   sveltejs/ai-tools/tools/skills/svelte-code-writer \
