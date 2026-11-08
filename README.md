@@ -88,6 +88,7 @@ for skill in \
   mattpocock/skills/skills/productivity/grilling \
   sveltejs/ai-tools/tools/skills/svelte-code-writer \
   sveltejs/ai-tools/tools/skills/svelte-core-bestpractices \
+  wshobson/agents/plugins/frontend-mobile-development/skills/tailwind-design-system \
   vercel-labs/agent-skills/skills/web-design-guidelines \
   Aas-ee/open-webSearch/skills/open-websearch \
   https://playwriter.dev \
